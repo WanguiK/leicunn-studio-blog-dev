@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+<title>User Profile | Leicunn Studio Blog</title>
+{% endblock title %}
+
+{% block brand %}
+<a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="{% url 'updateauthor' pk=user.get_username %}">{{ pagename }}</a>
+{% endblock brand %}
+
+{% block customcss %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.19.1/ui/trumbowyg.min.css" />
+<link href="{% static 'css/updateprofile.css' %}" rel="stylesheet" />
+{% endblock customcss %}
+
+{% block customjs %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.19.1/trumbowyg.min.js"></script>
+<script src="{% static 'js/updateprofile.js' %}"></script>
+{% endblock customjs %}
+
+{% block header %}
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 600px; background-image: url({% static 'images/profile-cover.jpg' %}); background-size: cover; background-position: center top;">
+    <!-- Mask -->
+    <span class="mask bg-gradient-default opacity-8"></span>
+    <!-- Header container -->
+    <div class="container-fluid d-flex align-items-center">
+        <div class="row">
+            <div class="col-lg-7 col-md-10">
+                {% if user.is_authenticated %}
+                    <h1 class="display-2 text-white text-capitalize">Hello {{ user.username }}</h1>
+                {% else %}
+                    <h1 class="display-2 text-white">Howdy Commissioner</h1>
+                {% endif %}
+                <p class="text-white mt-0 mb-5">This is your profile page. You can see the progress you've made
+                    with your work and manage your projects or assigned tasks</p>
+                <a href="#!" class="btn btn-info">View Profile</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock header %}
+
+{% block mainContent %}
+<div class="row">
+    <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+        <div class="card card-profile shadow">
+            <div class="row justify-content-center">
+                <div class="col-lg-3 order-lg-2">
+                    <div class="card-profile-image">
+                        <a href="#">
+                            <img src="{{ author.image.url }}" class="rounded-circle">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+                <div class="d-flex justify-content-between">
+                    <a href="#" class="invisible btn btn-sm btn-info mr-4">Connect</a>
+                    <a href="#" class="invisible btn btn-sm btn-default float-right">Message</a>
+                </div>
+            </div>
+            <div class="card-body pt-0 pt-md-4">
+                <div class="row">
+                    <div class="col">
+                        <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+                            <div>
+                                <span class="heading">22</span>
+                                <span class="description">Posts</span>
+                            </div>
+                            <div>
+                                <span class="heading">10</span>
+                                <span class="description">Viewers</span>
+                            </div>
+                            <div>
+                                <span class="heading">89</span>
+                                <span class="description">Comments</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <h3>
+                        {{ author.get_full_name }}
+                    </h3>
+                    <div class="h5 font-weight-300">
+                        <i class="ni location_pin mr-2"></i>{{ author.location }}
+                    </div>
+                    <div class="h5 mt-4">
+                        <i class="ni business_briefcase-24 mr-2"></i>{{ author.position }}
+                    </div>
+                    <hr class="my-4" />
+                    <p>{{ author.description }}</p>
+                    <a class="text-primary" href="#">Show more</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-8 order-xl-1">
+        <div class="card bg-secondary shadow">
+            <form method="post" enctype="multipart/form-data" action="" >
+                {% csrf_token %}
+                {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field }}
+                {% endfor %}
+                <div class="card-header bg-white border-0">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h2 class="mb-0">My Account</h2>
+                        </div>
+                        <div class="col-4 text-right">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span class="alert-inner--icon"><i class="fas fa-exclamation-circle"></i></span>
+                    <span class="alert-inner--text"><strong>Error!</strong> {{ form.non_field_errors.as_text }}</span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endif %}
+
+                <div class="card-body">
+                    <h6 class="heading-small text-muted mb-4">User information</h6>
+                    {% if form.errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span class="alert-inner--icon"><i class="fas fa-exclamation-circle"></i></span>
+                        <span class="alert-inner--text"><strong>Error!</strong> {{ form.errors.as_text }}</span>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endif %}
+                    <div class="pl-lg-4">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.first_name.id_for_label }}">First
+                                        Name</label>
+                                    <input type="text" id="{{ form.first_name.id_for_label }}" name="{{ form.first_name.name }}"  maxlength="{{ form.first_name.field.max_length }}" class="form-control form-control-alternative" placeholder="{{ form.first_name.help_text }}" value="{{ form.first_name.value | default_if_none:'' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.last_name.id_for_label }}">Last Name</label>
+                                    <input type="text" id="{{ form.last_name.id_for_label }}" name="{{ form.last_name.name }}" maxlength="{{ form.last_name.field.max_length }}" class="form-control form-control-alternative" placeholder="{{ form.last_name.help_text }}" value="{{ form.last_name.value | default_if_none:'' }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.email.id_for_label }}">Email Address</label>
+                                    <input type="email" id="{{ form.email.id_for_label }}" maxlength="{{ form.email.field.max_length }}" name="{{ form.email.name }}" class="form-control form-control-alternative" placeholder="{{ form.email.help_text }}" value="{{ form.email.value | default_if_none:'' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.position.id_for_label }}">Position</label>
+                                    <input type="text" id="{{ form.position.id_for_label }}" maxlength="{{ form.position.field.max_length }}" name="{{ form.position.name }}" class="form-control form-control-alternative" placeholder="{{ form.position.help_text }}" value="{{ form.position.value | default_if_none:'' }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.location.id_for_label }}">Location</label>
+                                    <input type="text" id="{{ form.location.id_for_label }}" class="form-control form-control-alternative" name="{{ form.location.name }}" maxlength="{{ form.location.field.max_length }}" placeholder="{{ form.location.help_text }}" value="{{ form.location.value | default_if_none:'' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <br/><div class="form-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input form-control form-control-alternative" name="{{ form.image.name }}" id="{{ form.image.id_for_label }}">
+                                        <label class="custom-file-label form-control-label" for="{{ form.image.id_for_label }}">Profile Picture</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="my-4" />
+                    <!-- Address -->
+                    <h6 class="heading-small text-muted mb-4">Social information</h6>
+                    <div class="pl-lg-4">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.website.id_for_label }}">Website</label>
+                                    <input id="{{ form.website.id_for_label }}" class="form-control form-control-alternative" name="{{ form.website.name }}" placeholder="{{ form.website.help_text }}" maxlength="{{ form.website.field.max_length }}" type="text" value="{{ form.website.value | default_if_none:'' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.twitter.id_for_label }}">Twitter</label>
+                                    <input type="text" id="{{ form.twitter.id_for_label }}" class="form-control form-control-alternative" name="{{ form.twitter.name }}" maxlength="{{ form.twitter.field.max_length }}" placeholder="{{ form.twitter.help_text }}" value="{{ form.twitter.value | default_if_none:'' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.instagram.id_for_label }}">Instagram</label>
+                                    <input type="text" id="input-instagram"
+                                    class="form-control form-control-alternative" name="{{ form.instagram.name }}" maxlength="{{ form.instagram.field.max_length }}" placeholder="{{ form.instagram.help_text }}" value="{{ form.instagram.value | default_if_none:'' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.linkedin.id_for_label }}">LinkedIn</label>
+                                    <input type="text" id="{{ form.linkedin.id_for_label }}"
+                                    class="form-control form-control-alternative" name="{{ form.linkedin.name }}" maxlength="{{ form.linkedin.field.max_length }}" placeholder="{{ form.linkedin.help_text }}" value="{{ form.linkedin.value | default_if_none:'' }}" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="my-4" />
+                    <!-- Description -->
+                    <h6 class="heading-small text-muted mb-4">Description</h6>
+                    <div class="pl-lg-4">
+                        <div class="form-group">
+                            <label class="form-control-label" for="{{ form.description.id_for_label }}">Summary</label>
+                            <textarea rows="4" id="{{ form.description.id_for_label }}" class="form-control form-control-alternative"
+                            name="{{ form.description.name }}" placeholder="{{ form.description.help_text }}" maxlength="{{ form.description.field.max_length }}" required>{{ form.description.value | default_if_none:'' }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label" for="{{ form.article.id_for_label }}">About Me</label>
+                            <textarea rows="6" class="form-control form-control-alternative" placeholder="{{ form.article.help_text }}" id="{{ form.article.id_for_label }}" name="{{ form.article.name }}" required>{{ form.article.value | default_if_none:'' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+</div>
+{% endblock mainContent %}
