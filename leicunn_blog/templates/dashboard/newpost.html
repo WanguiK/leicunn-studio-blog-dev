@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+<title>{{ pagename }} | Leicunn Studio Blog</title>
+{% endblock title %}
+
+{% block brand %}
+<a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="{% url 'newpost' %}">{{ pagename }}</a>
+{% endblock brand %}
+
+{% block customcss %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.19.1/ui/trumbowyg.min.css" />
+<link href="{% static 'css/newpost.css' %}" rel="stylesheet" />
+<link href="{% static 'css/tagsinput.css' %}" rel="stylesheet" />
+{% endblock customcss %}
+
+{% block customjs %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.19.1/trumbowyg.min.js"></script>
+<script src="{% static 'js/newpost.js' %}"></script>
+<script src="{% static 'js/tagsinput.js' %}"></script>
+{% endblock customjs %}
+
+{% block header %}
+<div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row">
+                <div class="col-lg-8 col-md-10">
+                    <h1 class="display-2 text-white">Add New Post</h1>
+                    <p class="text-white mt-0 mb-5">Create a new blog post and share to social media.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock header %}
+
+{% block mainContent %}
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for hidden_field in form.hidden_fields %}
+        {{ hidden_field }}
+    {% endfor %}
+    <div class="row mt-5">
+        <div class="col-xl-8 mb-5 mb-xl-0">
+            <div class="card bg-secondary shadow">
+                <div class="card-header border-0">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="mb-0">New Blog Post</h3>
+                        </div>
+                    </div>
+                </div>
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span class="alert-inner--icon"><i class="fas fa-exclamation-circle"></i></span>
+                    <span class="alert-inner--text"><strong>Error!</strong> {{ form.non_field_errors.as_text }}</span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endif %}
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            {% if form.errors %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <span class="alert-inner--icon"><i class="fas fa-exclamation-circle"></i></span>
+                                <span class="alert-inner--text"><strong>Error!</strong> {{ form.errors.as_text }}</span>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            {% endif %}
+
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.title.id_for_label }}">Blog Title</label>
+                                <input type="text" id="{{ form.title.id_for_label }}" class="form-control form-control-alternative text-capitalize" name="{{ form.title.name }}" maxlength="{{ form.title.field.max_length }}" placeholder="{{ form.title.help_text }}" value="{{ form.title.value | default_if_none:'' }}">
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.summary.id_for_label }}">Summary</label>
+                                <textarea rows="3" id="{{ form.summary.id_for_label }}" class="form-control form-control-alternative" name="{{ form.summary.name }}" maxlength="{{ form.summary.field.max_length }}" placeholder="{{ form.summary.help_text }}">{{ form.summary.value | default_if_none:'' }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.article.id_for_label }}">Article</label>
+                                <textarea rows="4" id="{{ form.article.id_for_label }}" name="{{ form.article.name }}" class="form-control form-control-alternative article" placeholder="{{ form.article.help_text }}">{{ form.article.value | default_if_none:'' }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.tags.id_for_label }}">Tags</label>
+                                <input type="text" id="{{ form.tags.id_for_label }}" name="{{ form.tags.name }}"  class="form-control form-control-alternative" maxlength="{{ form.tags.field.max_length }}" value="{{ form.tags.value | default_if_none:'' }}" placeholder="{{ form.tags.help_text }}">
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.slug.id_for_label }}">Slug</label>
+                                <input type="text" id="{{ form.slug.id_for_label }}" name="{{ form.slug.name }}" class="form-control form-control-alternative" placeholder="{{ form.slug.help_text }}" maxlength="{{ form.slug.field.max_length }}" value="{{ form.slug.value | default_if_none:'' }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="card bg-secondary shadow">
+                <div class="card-header border-0">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="mb-0">Article Settings</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            {% for choice in form.my_choice_field.field.choices %}
+                            <li>
+                                <input type="radio" name="my_choice_field" value="{{choice.0}}"
+                                {% ifequal form.my_choice_field.data choice.0 %} 
+                                    checked="checked"
+                                {% endifequal %}/>
+                                <label for="">{{choice.1}}</label>
+                            </li>
+                            {% endfor %}
+                            
+                            <div class="form-group">
+                                <label class="form-control-label">Post Status</label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="custom-control custom-control-alternative custom-radio mb-3">
+                                            <input name="{{ form.status.name }}" class="custom-control-input" id="{{ form.status.auto_id }}_0" value="{{ form.status.field.choices.0.0 }}" type="radio"
+                                            {% ifequal form.status.data form.status.field.choices.0.0 %} 
+                                                checked="checked"
+                                            {% endifequal %}
+                                            />
+                                            <label class="custom-control-label" for="{{ form.status.auto_id }}_0">{{ form.status.field.choices.0.1 }}</label>
+                                        </div>
+                                        <div class="custom-control custom-control-alternative custom-radio mb-3">
+                                            <input name="{{ form.status.name }}" class="custom-control-input" id="{{ form.status.auto_id }}_1" value="{{ form.status.field.choices.1.0 }}" type="radio"
+                                            {% ifequal form.status.data form.status.field.choices.1.0 %} 
+                                                checked="checked"
+                                            {% endifequal %}
+                                            />
+                                            <label class="custom-control-label" for="{{ form.status.auto_id }}_1">{{ form.status.field.choices.1.1 }}</label>
+                                        </div>
+                                        <div class="custom-control custom-control-alternative custom-radio mb-3">
+                                            <input name="{{ form.status.name }}" class="custom-control-input" id="{{ form.status.auto_id }}_2" value="{{ form.status.field.choices.2.0 }}" type="radio"
+                                            {% ifequal form.status.data form.status.field.choices.2.0 %} 
+                                                checked="checked"
+                                            {% endifequal %}
+                                            />
+                                            <label class="custom-control-label" for="{{ form.status.auto_id }}_2">{{ form.status.field.choices.2.1 }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="custom-control custom-control-alternative custom-radio mb-3">
+                                            <input name="{{ form.status.name }}" class="custom-control-input" id="{{ form.status.auto_id }}_3" value="{{ form.status.field.choices.3.0 }}" type="radio"
+                                            {% ifequal form.status.data form.status.field.choices.3.0 %} 
+                                                checked="checked"
+                                            {% endifequal %}
+                                            />
+                                            <label class="custom-control-label" for="{{ form.status.auto_id }}_3">{{ form.status.field.choices.3.1 }}</label>
+                                        </div>
+                                        <div class="custom-control custom-control-alternative custom-radio mb-3">
+                                            <input name="{{ form.status.name }}" class="custom-control-input" id="{{ form.status.auto_id }}_4" value="{{ form.status.field.choices.4.0 }}" type="radio"
+                                            {% ifequal form.status.data form.status.field.choices.4.0 %} 
+                                                checked="checked"
+                                            {% endifequal %}
+                                            />
+                                            <label class="custom-control-label" for="{{ form.status.auto_id }}_4">{{ form.status.field.choices.4.1 }}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.category.id_for_label }}">Category / Subject</label>
+                                <select name="{{ form.category.name }}" class="form-control form-control-alternative text-capitalize" id="{{ form.category.id_for_label }}">
+                                    {% for choice in form.category.field.choices %}
+                                        <option class="text-capitalize" value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <div class="custom-file">
+                                    <input type="file" id="{{ form.cover.id_for_label }}" class="custom-file-input form-control form-control-alternative" id="{{ form.cover.id_for_label }}" name="{{ form.cover.name }}">
+                                    <label class="custom-file-label form-control-label" for="{{ form.cover.id_for_label }}">Cover Photo</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <img src="{% static 'images/cover-placeholder.jpg' %}" class="shadow-lg img-fluid rounded" id="display" alt="Cover Photo">
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <button type="submit" class="btn btn-info">Save Post</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock mainContent %}

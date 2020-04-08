@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-<title>User Profile | Leicunn Studio Blog</title>
+<title>{{ pagename }} | Leicunn Studio Blog</title>
 {% endblock title %}
 
 {% block brand %}
@@ -50,7 +50,9 @@
                 <div class="col-lg-3 order-lg-2">
                     <div class="card-profile-image">
                         <a href="#">
-                            <img src="{{ author.image.url }}" class="rounded-circle">
+                            {% if author.image %}
+                            <img src="{{ author.image.url | default_if_none:'#' }}" class="rounded-circle">
+                            {% endif %}
                         </a>
                     </div>
                 </div>

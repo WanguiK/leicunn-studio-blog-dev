@@ -6,19 +6,17 @@ urlpatterns = [
 
     path('dashboard/', views.dashboard, name='dashboard'),
 
-    path('updateprofile/<str:pk>/',
-         views.UpdateAuthor.as_view(), name='updateauthor'),
+    path('updateprofile/<str:pk>/', views.UpdateAuthor.as_view(), name='updateauthor'),
 
     path('category/', views.CategoryCreate.as_view(), name='category'),
 
-    # path('update_author/<str:pk>/',
-    #      views.UpdateAuthor.as_view(), name='updateauthor'),
+    # path('newpost/', views.PostCreate, name='newpost'),
+
+    path('newpost/', views.PostCreate.as_view(), name='newpost'),
+    
+    path('allposts/', views.view_posts, name='posts'),
 
     # path('', views.index, name='index'),
-
-    # path('posts/', views.posts, name='posts'),
-
-    # path('newpost/', views.PostCreate.as_view(), name='newpost'),
 
     # path('editpost/<int:pk>/', views.EditPost.as_view(), name='editpost'),
 

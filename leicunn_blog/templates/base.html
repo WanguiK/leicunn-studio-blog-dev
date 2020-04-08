@@ -38,8 +38,9 @@
                     aria-expanded="false">
                     <div class="media align-items-center">
                         <span class="avatar avatar-sm rounded-circle">
-                            <img alt="" src="{{ user.image.url }}" />
-                            ">
+                            {% if user.image %}
+                                <img alt="" src="{{ user.image.url | default_if_none:'#' }}" />
+                            {% endif %}
                         </span>
                     </div>
                 </a>
@@ -114,18 +115,23 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " href="">
+                    <a class="nav-link " href="{% url 'newpost' %}">
                         <i class="fas fa-file-alt text-orange"></i></i> New Post
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link " href="{% url 'posts' %}">
+                        <i class="far fa-list-alt text-blue"></i></i> All Posts
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link " href="{% url 'updateauthor' pk=user.get_username %}">
-                        <i class="far fa-user-circle text-blue"></i> User Profile
+                        <i class="far fa-user-circle text-yellow"></i> User Profile
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link " href="profile.html">
-                        <i class="fas fa-user-plus text-yellow"></i> Register
+                        <i class="fas fa-user-plus text-warning"></i> Register
                     </a>
                 </li>
             </ul>
@@ -192,7 +198,9 @@
                         aria-expanded="false">
                         <div class="media align-items-center">
                             <span class="avatar avatar-sm rounded-circle">
-                                <img alt="Image placeholder" src="{{ user.image.url }}">
+                                {% if user.image %}
+                                    <img alt="Image placeholder" src="{{ user.image.url | default_if_none:'#' }}">
+                                {% endif %}
                             </span>
                             <div class="media-body ml-2 d-none d-lg-block">
                                 {% if user.is_authenticated %}

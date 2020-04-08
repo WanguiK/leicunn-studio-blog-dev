@@ -6,9 +6,19 @@
     border-radius: .375rem;
 }
 
-
 .trumbowyg-button-pane {
     background: white !important;
     border-top-left-radius: .375rem;
     border-top-right-radius: .375rem;
+}
+
+#display {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.custom-file-label {
+    border: 0;
+    box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02);
 }

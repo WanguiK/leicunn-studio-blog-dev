@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from blog.models import Author, Category
+from blog.models import *
 
 
 class AuthorCreationForm(UserCreationForm):
@@ -45,4 +45,14 @@ class AuthorChangeForm(UserChangeForm):
 class CategoryForm(ModelForm):
     class Meta:
         model = Category
-        fields = ['category', 'description', 'slug'] 
+        fields = ['category', 'description', 'slug']
+
+
+class PostForm(ModelForm):
+    status = forms.ChoiceField(choices=Post.POST_STATUS, widget=forms.RadioSelect())
+
+    slug = forms.CharField(max_length=100, help_text="A 50 character unique link to the blog post")
+
+    class Meta:
+        model = Post
+        fields = ['title', 'summary', 'article', 'tags', 'status', 'category', 'cover', 'slug']
