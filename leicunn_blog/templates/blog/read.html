@@ -1,0 +1,332 @@
+{% extends "blog/base_generic.html" %}
+
+{% load static %}
+
+{% block meta_description %}
+<meta name="description" content="{{ post.summary }}">
+{% endblock meta_description %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="leicunn studio, leicunn studio blog, {% for tag in post.tags.all %}{% if forloop.last %}{{ tag }}{% else %}{{ tag }}, {% endif %}{% endfor %}">
+{% endblock meta_keywords %}
+
+{% block meta_title %}
+<meta property="og:title" content="{{ post.title | title }} - Leicunn Studio Blog" />
+<meta property="og:url" content="{% url 'read' slug=post.slug %}" />
+{% endblock meta_title %}
+
+{% block title %}
+<title>{{ post.title | title }} - Leicunn Studio Blog</title>
+{% endblock title %}
+
+{% block customcss %}
+<link rel="stylesheet" href="{% static 'css/read.css' %}" />
+{% endblock customcss %}
+
+{% block customjs %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="{% static 'js/read.js' %}"></script>
+{% endblock customjs %}
+
+
+{% block menu %}
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v4.0&appId=422541915059473&autoLogAppEvents=1"></script>
+{% include "blog/common_menu.html" %}
+{% endblock menu %}
+
+
+{% block content %}
+<!-- CONTENT ONE -->
+<div class="row" id="content1">
+    <div class="col m12 l4 s12 offset-l4">
+
+        <div class="category">
+            <a href="{% url 'categoryarticles' slug=post.category.slug %}" class="white waves-effect waves-light btn lato grey-text text-darken-4 btn-large">{{ post.category | upper }}</a>
+        </div>
+
+        <div class="title">
+            <h1 class="lato">{{ post.title }}</h1>
+            <p class="lato">{{ post.created | date:"F j" }}<sup>{{ post.created | date:"S" }}</sup>, {{ post.created | date:"Y" }}</p>
+        </div>
+
+        <div class="summary">
+            <h4 class="nunito">Summary: {{ post.summary }}</h4>
+        </div>
+
+    </div>
+</div>
+<!-- END OF CONTENT ONE -->
+
+
+<!-- COVER IMAGE -->
+<div class="row" id="cover">
+    <div class="col m12 l6 s12 offset-l3">
+
+        <img class="materialboxed" id="cover-image" src="{{ post.cover.image.url }}" alt="{{ post.cover.description }}" />
+
+    </div>
+</div>
+<!-- END OF COVER IMAGE -->
+
+
+<!-- CONTENT TWO -->
+<div class="row" id="content2">
+    <div class="col m12 l4 s12 offset-l4">
+
+        <div class="article">
+            {{ post.article | safe }}
+        </div>
+
+    </div>
+</div>
+<!-- END OF CONTENT TWO -->
+
+
+<!-- SHARE -->
+<div class="row" id="share">
+    <div class="col m12 l6 s12 offset-l3">
+
+        <div class="row">
+            <div class="col m7 l7 s12">
+                <h4 class="lato grey-text text-darken-4">TAGS</h4>
+                <ul>
+                    {% for tag in post.tags.all %}
+                    <li><a href="{% url 'tag' slug=tag.slug %}" class="nunito">{{ tag | title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="col m5 l5 s12">
+                <h4 class="lato grey-text text-darken-4">SHARE</h4>
+                <ul>
+                    <li><a href="#" onClick="MyWindow=window.open('https://twitter.com/intent/tweet?text=Read%20this%20amazing%20article&via=LeicunnStudio&url=https%3A%2F%2Fleicunnstudio.com/read/{{ post.slug }}%2F&hashtags=LeicunnStudioBlog','Share Leicunn Studio Blog Article','width=600,height=300'); return false;" class="grey-text text-darken-4 fab fa-twitter"></a></li>
+
+                    <li><a href="https://blog.leicunnstudio.com/read/{{ post.slug }}/" class="grey-text text-darken-4 fab fa-facebook-f"  id="facebookShare"></a></li>
+
+                    <li><a href="https://www.linkedin.com/shareArticle?mini=true&url=https://blog.leicunnstudio.com/read/{{ post.slug }}/&title={{ post.title }}&summary={{ post.summary }}&source=Leicunn%20Studio%20Blog" class="grey-text text-darken-4 fab fa-linkedin-in"></a></li>
+
+                    <li><a data-pin-custom="true" data-pin-do="buttonPin" href="https://www.pinterest.com/pin/create/button/?url=https://blog.leicunnstudio.com/read/{{ post.slug }}/&media=https://blog.leicunnstudio.com/{{ post.cover.image.url }}/&description={{ post.title }}" class="grey-text text-darken-4 fab  fa-pinterest-p"></a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- END OF SHARE -->
+
+
+<!-- AUTHOR -->
+<div class="row" id="author">
+    <div class="col m12 l6 s12 offset-l3">
+
+        <div class="row">
+
+            <div class="col m4 l4 s12 center-align">
+                <img class="circle" src="{{ post.author.image.image.url }}" alt="{{ post.author.image.description }}" />
+                <ul>
+                    <li><a href="mailto:{{ post.author.email }}" target="_blank" class="grey-text text-darken-4 fas  fa-envelope"></a></li>
+                    <li><a href="{{ post.author.website }}" target="_blank" class="grey-text text-darken-4 fas fa-globe"></a></li>
+                    <li><a href="{{ post.author.linkedin }}" target="_blank" class="grey-text text-darken-4 fab fa-linkedin-in"></a></li>
+                    <li><a href="{{ post.author.twitter }}" target="_blank" class="grey-text text-darken-4 fab fa-twitter"></a></li>
+                    <li><a href="{{ post.author.instagram }}" target="_blank" class="grey-text text-darken-4 fab fa-instagram"></a></li>
+                </ul>
+            </div>
+
+            <div class="col m8 l8 s12">
+                <h2 class="lato grey-text text-darken-4">{{ post.author.get_full_name | title }}</h2>
+                <h3 class="nunito">{{ post.author.description }} <br/> 
+                    <a href="" class="lato blue-text text-darken-3"><strong>Read More</strong></a>
+                </h3>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<!-- END OF AUTHOR -->
+
+<!-- PREVIOUS NEXT -->
+<div class="row" id="prevnext">
+    <div class="col m12 s12 l6 offset-l3">
+
+            <div class="row">
+                <div class="col m6 l6 s12">
+
+                    <a href="{% url 'read' slug=next.slug %}">
+                        <div class="card">
+                            <div class="card-image">
+                                <img src="{{ next.cover.image.url }}" alt="{{ next.cover.description }}">
+                                <div class="card-title">
+                                    <p class="nunito">
+                                        <span>Next</span>
+                                        <span>
+                                            <i class="material-icons">arrow_back</i>
+                                        </span>
+                                    </p>
+                                    <h4 class="lato">
+                                        {{ next.title | title }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                </div>
+
+                <div class="col m6 l6 s12">
+
+                    <a href="{% url 'read' slug=previous.slug %}">
+                        <div class="card">
+                            <div class="card-image">
+                                <img src="{{ previous.cover.image.url }}" alt="{{ previous.cover.descriptiom }}">
+                                <div class="card-title">
+                                    <p class="nunito">
+                                        <span>
+                                            <i class="material-icons">arrow_forward</i>
+                                        </span>
+                                        <span>Previous</span>
+                                    </p>
+                                    <h4 class="lato">
+                                        {{ previous.title | title }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+    </div>
+</div>
+<!-- END OF PREVIOUS NEXT -->
+
+
+{% if comments %}
+<!-- COMMENTS -->
+<div class="row" id="comments">
+    <div class="col m12 l6 s12 offset-l3">
+
+        {% for comment in comments %}
+
+            {% if not comment.parent %}
+
+                <div class="row">
+                    <div class="col m2 l2 s3">
+                        <img class="circle" src="{{ comment.image }}" alt="" />
+                    </div>
+                    <div class="col m10 l10 s9 commenter">
+                        <ul>
+                            <li class="lato" id="name{{ comment.id }}">{{ comment.name | title }}</li>
+                            <li class="lato">{{ comment.created | date:"F j" }}<sup>{{ comment.created | date:"S" }}</sup>, {{ comment.created | date:"Y" }} at {{ comment.created | date:"g" }}.{{ comment.created | date:"i" }} {{ comment.created | date:"A" }}</li>
+                            <li class="lato">
+                                <a class="reply" id="{{ comment.id }}" href="#discuss">REPLY</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col m12 l12 s12">
+                        <p class="nunito">{{ comment.content }}</p>
+                    </div>
+
+                    {% for reply in comment.replies.all %}
+                    <div class="row inner">
+                        <div class="col m2 l2 s3">
+                            <img class="circle" src="{{ reply.image }}" alt="" />
+                        </div>
+                        <div class="col m10 l10 s9 commenter">
+                            <ul>
+                                <li class="lato">{{ reply.name | title }}</li>
+                                <li class="lato">{{ reply.created | date:"F j" }}<sup>{{ reply.created | date:"S" }}</sup>, {{ reply.created | date:"Y" }} at {{ reply.created | date:"g" }}.{{ reply.created | date:"i" }} {{ reply.created | date:"A" }}</li>
+                                <li>
+                                    <i class="fas fa-retweet"></i>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col m12 l12 s12">
+                            <p class="nunito">{{ reply.content }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endfor %}
+
+    </div>
+</div>
+<!-- END OF COMMENTS -->
+{% endif %}
+
+
+<!-- DISCUSS -->
+<div class="row" id="discuss">
+    <div class="col m12 l6 s12 offset-l3">
+
+        <div class="row">
+            <h4 class="lato">JOIN THE DISCUSSION</h4>
+
+            <form class="row" action="" method="POST">
+
+                {% csrf_token %}
+                {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field }}
+                {% endfor %}
+
+                {% if form.non_field_errors %}
+                <script>
+                    swal({
+                        title: "Error!",
+                        text: "{{ form.non_field_errors.as_text }}",
+                        icon: "error"
+                    });
+                </script>
+                {% endif %}
+
+                {% if form.errors %}
+                <script>
+                    swal({
+                        title: "Error!",
+                        text: "{{ form.errors.as_text }}",
+                        icon: "error"
+                    });
+                </script>
+                {% endif %}
+
+                <div class="input-field col m12 l12 s12">
+                    <textarea id="{{ form.content.id_for_label }}" name="{{ form.content.name }}" class="nunito materialize-textarea" rows="5" placeholder="{{ form.content.help_text }}" maxlength="{{ form.content.field.max_length }}" required></textarea>
+                </div>
+
+                <div class="input-field col m4 l4 s12">
+                    <input style="text-transform: capitalize;" placeholder="{{ form.name.help_text }}" maxlength="{{ form.name.field.max_length }}" id="{{ form.name.id_for_label }}" type="text" name="{{ form.name.name }}" class="nunito" required>
+                </div>
+                <div class="input-field col m4 l4 s12">
+                    <input placeholder="{{ form.email.help_text }}" id="{{ form.email.id_for_label }}" maxlength="{{ form.email.field.max_length }}" name="{{ form.email.name }}" class="nunito" type="email" required>
+                </div>
+                <div class="input-field col m4 l4 s12">
+                    <input placeholder="{{ form.website.help_text }}" id="{{ form.website.id_for_label }}" name="{{ form.website.name }}" maxlength="{{ form.website.field.max_length }}" class="nunito" type="text">
+                </div>
+
+                <div class="input-field col m4 l4 s12" style="display: none;">
+                    <select name="{{ form.parent.name }}" class="text-capitalize browser-default" id="{{ form.parent.id_for_label }}">
+                        <option class="text-capitalize" value=""></option>
+                        {% for choice in query %}
+                            <option class="text-capitalize" value="{{ choice.pk }}">{{ choice.pk }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-field col m12 l12 s12">
+                    <button class="lato btn-large btn" type="submit" name="submit">SUBMIT</button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+</div>
+<!-- END OF DISCUSS -->
+{% endblock content %}

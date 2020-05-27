@@ -49,11 +49,11 @@
             <div class="row justify-content-center">
                 <div class="col-lg-3 order-lg-2">
                     <div class="card-profile-image">
-                        <a href="#">
-                            {% if author.image %}
-                            <img src="{{ author.image.url | default_if_none:'#' }}" class="rounded-circle">
-                            {% endif %}
-                        </a>
+                        {% if author.image %}
+                            <img src="{{ author.image.image.url | default_if_none:'#' }}" class="rounded-circle">
+                        {% else %}
+                            <img src="{% static 'images/placeholder.png' %}" class="rounded-circle">
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -178,10 +178,18 @@
                             </div>
                             <div class="col-lg-6">
                                 <br/><div class="form-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input form-control form-control-alternative" name="{{ form.image.name }}" id="{{ form.image.id_for_label }}">
-                                        <label class="custom-file-label form-control-label" for="{{ form.image.id_for_label }}">Profile Picture</label>
-                                    </div>
+                                    <a href="#!" type="button" class="btn btn-primary" data-toggle="modal" data-target="#selectImage">
+                                        Select Your Profile Photo
+                                    </a>
+                                    <select name="{{ form.image.name }}" class="d-none form-control form-control-alternative text-capitalize" id="{{ form.image.id_for_label }}">
+                                        {% for choice in form.image.field.choices %}
+                                            <option class="text-capitalize" value="{{ choice.0 }}"
+                                                {% ifequal form.image.value choice.0 %}
+                                                    selected="selected"
+                                                {% endifequal %}
+                                            >{{ choice.1 }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -239,4 +247,46 @@
     </div>
     
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="selectImage" tabindex="-1" role="dialog" aria-labelledby="selectImageTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="selectImageTitle">Media Gallery</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-secondary">
+            
+                <div class="row">
+
+                    {% for m in media %}
+                    <div class="col-md-4 pb-3" id="media{{ m.id }}">
+                        <div class="card">
+                            <img class="card-img-top" src="{{ m.image.url }}" alt="Card image cap">
+                            <div class="card-body">
+                                <div class="custom-control custom-radio pr-3">
+                                    <input name="rowimg" class="custom-control-input" value="{{ m.id }}" id="media-{{ m.id }}" type="radio">
+                                    <label class="card-title custom-control-label text-capitalize" for="media-{{ m.id }}">
+                                        <strong>{{ m.description }}</strong>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+    
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="selectCover">Select Image</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Modal -->
 {% endblock mainContent %}

@@ -23,7 +23,7 @@ class AuthorChangeForm(UserChangeForm):
 
     location = forms.CharField(max_length=50, help_text="City, Country")
 
-    image = forms.FileField()
+    image = forms.ModelChoiceField(queryset=Media.objects.order_by('-created').filter(post=None, type="Profile"), empty_label=None)
 
     website = forms.URLField(max_length=100, help_text="http://www.example.com")
 
@@ -48,11 +48,50 @@ class CategoryForm(ModelForm):
         fields = ['category', 'description', 'slug']
 
 
+class MediaForm(ModelForm):
+
+    image = forms.FileField()
+    
+    class Meta:
+        model = Media
+        fields = ['description', 'slug', 'type', 'image']
+
+
 class PostForm(ModelForm):
     status = forms.ChoiceField(choices=Post.POST_STATUS, widget=forms.RadioSelect())
+
+    cover = forms.ModelChoiceField(queryset=Media.objects.order_by('-created').filter(post=None, type="Cover"), empty_label=None)
 
     slug = forms.CharField(max_length=100, help_text="A 50 character unique link to the blog post")
 
     class Meta:
         model = Post
         fields = ['title', 'summary', 'article', 'tags', 'status', 'category', 'cover', 'slug']
+
+class EditForm(ModelForm):
+    status = forms.ChoiceField(choices=Post.POST_STATUS, widget=forms.RadioSelect())
+
+    cover = forms.ModelChoiceField(queryset=Media.objects.order_by('-created').filter(type="Cover"), empty_label=None)
+
+    slug = forms.CharField(max_length=100, help_text="A 50 character unique link to the blog post")
+
+    class Meta:
+        model = Post
+        fields = ['title', 'summary', 'article', 'tags', 'status', 'category', 'cover', 'slug']
+
+class QuoteForm(ModelForm):
+    class Meta:
+        model = Quote
+        fields = ['quote', 'owner']
+
+
+class CommentForm(ModelForm):
+    
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        # fields = ['content', 'name', 'email', 'website', 'parent']
+
+    # def __init__(self, *args, **kwargs):
+    #     super(CommentForm, self).__init__(*args, **kwargs)
+    #     self.fields['parent'].queryset = Comment.objects.filter(status="Show", replies=None)

@@ -1,0 +1,17 @@
+.table-responsive {
+    height: 500px !important;
+    overflow: scroll;
+    padding: 1em;
+}
+
+table tr td.desc {
+    width: 45% !important;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+.card .table td, 
+.card .table th {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}

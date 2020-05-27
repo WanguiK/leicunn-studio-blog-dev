@@ -1,0 +1,67 @@
+{% load static %}
+
+<!-- TOP BAR -->
+<div class="top-bar p-menu black">
+    <ul>
+        <li class="white-text lato">FOLLOW US</li>
+        <li><a class="white-text fas fa-envelope" href="mailto:leicunn@leicunnstudio.com"></a></li>
+        <li><a class="white-text fab fa-facebook-f" href="https://www.facebook.com/LeicunnStudio/"></a></li>
+        <li><a class="white-text fab fa-instagram" href="https://www.instagram.com/leicunn.studio/"></a></li>
+        <li><a class="white-text fab fa-twitter" href="https://twitter.com/leicunnstudio"></a></li>
+        <li><a class="white-text fab fa-linkedin-in" href="https://www.linkedin.com/company/leicunnstudio"></a></li>
+        <li><a class="right white-text modal-trigger" href="#search">
+            <i class="material-icons">search</i>
+        </a></li>
+    </ul>
+</div>
+<!-- END OF TOP BAR -->
+
+
+<!-- SIDENAV TRIGGER -->
+<div class="right-align hide-on-large-only">
+    <a href="#" data-target="mobile-demo" class="sidenav-trigger grey-text text-darken-4"><i class="material-icons">menu</i></a>
+</div>
+<!-- END OF SIDENAV TRIGGER -->
+
+
+<!-- SEARCH MODAL -->
+<div id="search" class="modal">
+    <button class="btn right modal-close" id="closeSearch">
+        <i class="material-icons">close</i>
+    </button>
+    <div class="modal-content center">
+        <h5 class="nunito grey-text text-darken-1">Search</h5>
+        <form action="{% url 'search' %}" method="GET">
+            <div class="input-field modal-form">
+                <i class="material-icons prefix">search</i>
+                <input id="icon_prefix" name="q" type="text" class="center lato" placeholder="Enter search phrase and press ENTER">
+            </div>
+        </form>
+    </div>
+</div>
+<!-- END OF SEARCH MODAL -->
+
+
+<!-- BLOG LOGO -->
+<div class="blog-logo center-align">
+    <img src="{% static 'images/blog-logo.png' %}" />
+</div>
+<!-- END OF BLOG LOGO -->
+
+
+<!-- NAVIGATION -->
+<nav class="p-menu">
+    <div class="nav-wrapper">
+        <ul class="hide-on-med-and-down lato">
+            {% for cat in categories %}
+                <li><a href="{% url 'categoryarticles' slug=cat.slug %}" class="grey-text text-darken-4">{{ cat.category | upper }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+</nav>
+<ul class="sidenav lato" id="mobile-demo">
+    {% for cat in categories %}
+        <li><a href="{% url 'categoryarticles' slug=cat.slug %}" class="grey-text text-darken-4 sidenav-close">{{ cat.category | upper }}</a></li>
+    {% endfor %}
+</ul>
+<!-- END OF NAVIGATION -->

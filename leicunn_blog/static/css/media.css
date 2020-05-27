@@ -1,0 +1,43 @@
+.custom-file-label,
+#display {
+    border: 0;
+    box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02);
+    transition: box-shadow .15s ease;
+}
+
+.pb-4 .card {
+    border: none;
+    box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02);
+}
+
+label.card-title {
+    font-size: 0.8125rem;
+    font-family: inherit;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #32325d;
+}
+
+.card .card-body.whole {
+    max-height: 740px !important;
+    min-height: 300px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.col-md-4.pb-4 .card img {
+    height: 200px !important;
+    width: 100%;
+}
+
+.row hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 10px solid rgba(0, 0, 0, 0.1);
+}
+
+.card-body h5 {
+    margin-bottom: 0 !important;
+    font-size: 0.875rem;
+}

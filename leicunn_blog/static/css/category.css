@@ -5,7 +5,7 @@
 }
 
 table tr td.desc {
-    width: 200px !important;
+    width: 80% !important;
     white-space: normal;
     word-wrap: break-word;
 }

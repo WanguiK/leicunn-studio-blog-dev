@@ -14,6 +14,12 @@
 <link href="{% static 'css/posts.css' %}" rel="stylesheet" />
 {% endblock customcss %}
 
+{% block customjs %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="{% static 'js/posts.js' %}"></script>
+{% endblock customjs %}
+    
+
 {% block header %}
 <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
     <div class="container-fluid">
@@ -39,8 +45,8 @@
                         <h3 class="mb-0">All Blog Posts</h3>
                     </div>
                     <div class="col text-right">
-                        <a href="#!" class="btn btn-sm btn-info">Edit</a>
-                        <a href="#!" class="btn btn-sm btn-danger">Delete</a>
+                        <a href="#!" id="edit" class="btn btn-sm btn-info">Edit</a>
+                        <a href="#!" id="delete" class="btn btn-sm btn-danger">Delete</a>
                     </div>
                 </div>
             </div>
@@ -63,15 +69,16 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% csrf_token %}
                         {% for p in posts %}
-                        <tr>
+                        <tr id="post{{ p.id }}">
                             <td>
-                                <div class="custom-control custom-checkbox mb-3">
-                                    <input class="custom-control-input" id="post_{{ p.id }}" type="checkbox">
-                                    <label class="custom-control-label" for="post_{{ p.id }}"></label>
+                                <div class="custom-control custom-radio mb-3">
+                                    <input name="rowpost" class="custom-control-input" value="{{ p.id }}" id="post-{{ p.id }}" type="radio">
+                                    <label class="custom-control-label" for="post-{{ p.id }}"></label>
                                 </div>
                             </td>
-                            <th scope="row" class="text-capitalize text-break title">
+                            <th scope="row" class="text-capitalize text-break title" id="title{{ p.id }}">
                                 {{ p.title }}
                             </th>
                             <td>
@@ -99,7 +106,7 @@
                                 {{ p.updated | date:"D d M Y" }}<br/> <strong>|</strong> {{ p.status }}
                             </td>
                             <td class="text-center">
-                                <a href="" class="fas fa-eye text-primary"></a>
+                                <a href="{% url 'read' slug=p.slug %}" target="_blank" class="fas fa-eye text-primary"></a>
                             </td>
                         </tr>
                         {% endfor %}

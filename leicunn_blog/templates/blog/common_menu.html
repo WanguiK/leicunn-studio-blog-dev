@@ -1,0 +1,31 @@
+{% load static %}
+
+<!-- NAVIGATION -->
+<div class="navbar-fixed">
+    <nav class="p-menu">
+        <div class="nav-wrapper">
+            <a href="{% url 'index' %}" class="brand-logo center news grey-text text-darken-4">
+                <img src="{% static 'images/logo.png' %}" alt="Leicunn Studio Blog" />
+            </a>
+            <a href="#" data-target="mobile-demo" class="sidenav-trigger grey-text text-darken-4"><i class="material-icons">menu</i></a>
+            <ul class="left hide-on-med-and-down lato">
+                
+                {% for menu in left_menu %}
+                    <li><a href="{% url 'categoryarticles' slug=menu.slug %}" class="grey-text text-darken-4">{{ menu.category | upper }}</a></li>
+                {% endfor %}
+            </ul>
+            <ul class="right hide-on-med-and-down lato grey-text text-darken-4">
+                {% for menu in right_menu %}
+                    <li><a href="{% url 'categoryarticles' slug=menu.slug %}" class="grey-text text-darken-4">{{ menu.category | upper }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </nav>
+</div>
+
+<ul class="sidenav lato" id="mobile-demo">
+    {% for cat in categories %}
+        <li><a href="{% url 'categoryarticles' slug=cat.slug %}" class="grey-text text-darken-4 sidenav-close">{{ cat.category | upper }}</a></li>
+    {% endfor %}
+</ul>
+<!-- END OF NAVIGATION -->

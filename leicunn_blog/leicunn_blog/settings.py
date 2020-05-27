@@ -121,13 +121,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-EMAIL_HOST = 'mail.leicunnstudio.com'
-EMAIL_HOST_USER = 'kamande@leicunnstudio.com'
-EMAIL_HOST_PASSWORD = 'Wangu!101'
-EMAIL_PORT = '993'
-
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (

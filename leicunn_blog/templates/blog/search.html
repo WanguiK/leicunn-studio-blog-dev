@@ -1,0 +1,105 @@
+{% extends "blog/base_generic.html" %}
+
+{% load static %}
+
+{% block meta_description %}
+<meta name="description" content="">
+{% endblock meta_description %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="leicunn studio, leicunn studio blog">
+{% endblock meta_keywords %}
+
+{% block meta_title %}
+<meta property="og:title" content='Search "{{ search_query | title }}" - Leicunn Studio Blog' />
+<meta property="og:url" content="{% url 'search' %}" />
+{% endblock meta_title %}
+
+{% block title %}
+<title>Search "{{ search_query | title }}" - Leicunn Studio Blog</title>
+{% endblock title %}
+
+{% block customcss %}
+<link rel="stylesheet" href="{% static 'css/bookmark.css' %}" />
+{% endblock customcss %}
+
+{% block customjs %}
+<script src="{% static 'js/index.js' %}"></script>
+{% endblock customjs %}
+
+{% block waypoints %}
+<script src="{% static 'js/waypoints/lib/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'js/waypoints/lib/shortcuts/infinite.min.js' %}"></script>
+{% endblock waypoints %}
+
+
+{% block menu %}
+{% include "blog/common_menu.html" %}
+{% endblock menu %}
+
+
+{% block content %}
+<!-- JUMBO -->
+<div id="category-title" class="grey lighten-4 center">
+    <i class="material-icons white">bookmark</i>
+    <h1 class="zilla"><strong>"{{ search_query }}"</strong></h1><br/>
+    <p class="nunito grey-text darken-4">Search: Posts containing "{{ search_query }}"</p>
+</div>
+<!-- END OF JUMBO -->
+
+
+<!-- POSTS -->
+<div id="posts">
+    <div class="row infinite-container">
+
+        {% for p in posts %}
+            <div class="col m12 xl4 l4 s12 col-normal infinite-item">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ p.cover.image.url }}" alt="{{ p.cover.description }}">
+                        <a href="{% url 'categoryarticles' slug=p.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ p.category | upper }}</a>
+                        <a href="{% url 'read' slug=p.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
+                            <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <p class="nunito" style="color: gray;">By
+                            <span class="grey-text text-darken-4">{{ p.author.get_full_name }}</span>
+                            <i class="material-icons">arrow_forward_ios</i>
+                            {{ p.created | date:"F j" }}<sup>{{ p.created | date:"S" }}</sup>, {{ p.created | date:"Y" }}
+                        </p>
+                        <h1 class="zilla capitalize">{{ p.title | title }}</h1>
+                        <p class="nunito" style="text-align: justify;">{{ p.summary }}</p>
+                        <a href="{% url 'read' slug=p.slug %}" class="btn btn-large lato">READ MORE</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+
+    <div class="center-align loading" style="display: none;">
+        <div class="preloader-wrapper big active center-align">
+            <div class="spinner-layer spinner-cyan">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if page_obj.has_next %}
+        <div class="load-more center-align">
+            <a href="?page={{ page_obj.next_page_number }}" class="lato btn btn-large infinite-more-link">More</a>
+        </div>
+    {% endif %}
+
+</div>
+<!-- END OF POSTS -->
+{% endblock content %}

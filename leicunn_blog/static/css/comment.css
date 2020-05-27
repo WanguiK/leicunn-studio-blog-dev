@@ -1,0 +1,27 @@
+.table-responsive {
+    height: 750px !important;
+    overflow: scroll;
+    padding: 1em;
+}
+
+table tr td.comment,
+table tr td.post {
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+table tr td.author {
+    width: 30px !important;
+}
+
+table tr td.comment {
+    width: 60% !important;
+}
+
+table tr td.post {
+    width: 30% !important;
+}
+
+table tr td.mail {
+    width: 80% !important;
+}

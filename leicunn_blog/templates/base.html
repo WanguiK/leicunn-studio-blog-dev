@@ -39,7 +39,9 @@
                     <div class="media align-items-center">
                         <span class="avatar avatar-sm rounded-circle">
                             {% if user.image %}
-                                <img alt="" src="{{ user.image.url | default_if_none:'#' }}" />
+                                <img alt="" src="{{ user.image.image.url | default_if_none:'#' }}" />
+                            {% else %}
+                                <img alt="" src="{% static 'images/placeholder.png' %}" />
                             {% endif %}
                         </span>
                     </div>
@@ -106,7 +108,7 @@
             <ul class="navbar-nav">
                 <li class="nav-item  active ">
                     <a class="nav-link  active " href="{% url 'dashboard' %}">
-                        <i class="fas fa-desktop text-primary"></i> Dashboard
+                        <i class="fas fa-desktop text-blue"></i> Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
@@ -115,13 +117,28 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link " href="{% url 'media' %}">
+                        <i class="fas fa-photo-video text-orange"></i> Media
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link " href="{% url 'newpost' %}">
-                        <i class="fas fa-file-alt text-orange"></i></i> New Post
+                        <i class="fas fa-file-alt text-yellow"></i> New Post
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link " href="{% url 'posts' %}">
-                        <i class="far fa-list-alt text-blue"></i></i> All Posts
+                        <i class="far fa-list-alt text-blue"></i> All Posts
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="{% url 'quote' %}">
+                        <i class="fas fa-quote-left text-pink"></i> Quotes
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'comments' %}">
+                        <i class="far fa-comment-alt text-orange"></i> Comments
                     </a>
                 </li>
                 <li class="nav-item">
@@ -131,7 +148,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link " href="profile.html">
-                        <i class="fas fa-user-plus text-warning"></i> Register
+                        <i class="fas fa-user-plus text-blue"></i> Register
                     </a>
                 </li>
             </ul>
@@ -157,6 +174,12 @@
                     <a class="nav-link"
                         href="">
                         <i class="fas fa-newspaper"></i> Category / Subject Page
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                        href="">
+                        <i class="fas fa-newspaper"></i> Tags Page
                     </a>
                 </li>
                 <li class="nav-item">
@@ -199,7 +222,9 @@
                         <div class="media align-items-center">
                             <span class="avatar avatar-sm rounded-circle">
                                 {% if user.image %}
-                                    <img alt="Image placeholder" src="{{ user.image.url | default_if_none:'#' }}">
+                                    <img alt="Profile Picture" src="{{ user.image.image.url | default_if_none:'#' }}" />
+                                {% else %}
+                                    <img alt="Image placeholder" src="{% static 'images/placeholder.png' %}" />
                                 {% endif %}
                             </span>
                             <div class="media-body ml-2 d-none d-lg-block">

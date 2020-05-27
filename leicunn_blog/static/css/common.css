@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css?family=Lato|Nunito+Sans:300,400|Zilla+Slab:400,500&display=swap');
+
+html, body {
+    overflow-x: hidden;
+}
+
+@font-face {
+    font-family: 'Lombok';
+    src: url('../fonts/Lombok.eot');
+    src: url('../fonts/Lombok.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/Lombok.woff2') format('woff2'),
+        url('../fonts/Lombok.woff') format('woff'),
+        url('../fonts/Lombok.ttf') format('truetype'),
+        url('../fonts/Lombok.svg#Lombok') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+/* COLOR */
+.turqoise {
+    color: #00ffff !important;
+}
+
+.bg-turqoise {
+    background-color: #00ffff !important;
+}
+/* END OF COLOR */
+
+
+/* FONTS */
+.nunito {
+    font-family: 'Nunito Sans', sans-serif;
+}
+
+.lato {
+    font-family: "Lato", sans-serif;
+}
+
+.lombok {
+    font-family: 'Lombok', sans-serif;
+}
+
+.zilla {
+    font-family: 'Zilla Slab', cursive;
+}
+/* END OF FONTS */
+
+
+/* MATERIAL ICONS */
+material-icons {
+    font-style: rounded;
+    line-height: 2;
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+}
+/* END OF MATERIAL ICONS */
+
+
+/* MARGINS AND PADS */
+.p-menu {
+    padding-left: 9%;
+    padding-right: 9%;
+}
+/* END OF MARGINS AND PADS */
+
+
+/* FORMS */
+input, textarea {
+    box-sizing : border-box !important;
+}
+.input-field:not(.modal-form) {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+textarea.materialize-textarea,
+.input-field:not(.modal-form) input {
+    border: 2px solid #c7c7c7  !important;
+    color: gray !important;
+    font-size: 17px !important;
+    border-radius: 2px !important;
+}
+
+.input-field:not(.modal-form) input {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+/* valid color */
+.input-field:not(.modal-form) input[type=text].valid,
+.input-field:not(.modal-form) input[type=text]:focus,
+.input-field:not(.modal-form) input[type=email]:focus,
+.input-field:not(.modal-form) input[type=email].valid,
+.input-field:not(.modal-form) textarea:focus {
+    border-bottom: 2px solid #c7c7c7 !important;
+    box-shadow: none !important;
+}
+/* invalid color */
+.input-field:not(.modal-form) input[type=text].invalid,
+.input-field:not(.modal-form) input[type=email].invalid {
+    border-bottom: 2px solid #c7c7c7 !important;
+    box-shadow: none !important;
+}
+/* END OF FORMS */
+
+
+@media only screen and (max-width: 1399px) and (min-width: 1025px){
+
+    /* MARGINS AND PADS */
+    .p-menu {
+        padding-left: .5%;
+        padding-right: .5%;
+    }
+    /* END OF MARGINS AND PADS */
+
+}
+
+@media only screen and (max-width: 1024px) and (min-width: 993px){
+
+    /* MARGINS AND PADS */
+    .p-menu {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    /* END OF MARGINS AND PADS */
+
+}
+
+/* COL M stops here */
+@media only screen and (max-width: 992px) and (min-width: 959px) {
+
+    /* MARGINS AND PADS */
+    .p-menu {
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+    /* END OF MARGINS AND PADS */
+
+}
+
+/* All Mobile Sizes (devices and browser) */
+@media only screen and (min-width: 768px) and (max-width: 958px) {
+
+    /* MARGINS AND PADS */
+    .p-menu {
+        padding-left: 3%;
+        padding-right: 3%;
+    }
+    /* END OF MARGINS AND PADS */
+
+}
+
+/* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+
+    /* MARGINS AND PADS */
+    .p-menu {
+        padding-left: 2%;
+        padding-right: 2%;
+    }
+    /* END OF MARGINS AND PADS */
+
+}
+
+/* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
+@media only screen and (min-width: 320px) and (max-width: 479px) {
+
+    /* MARGINS AND PADS */
+    .p-menu {
+        padding-left: 2%;
+        padding-right: 0;
+    }
+    /* END OF MARGINS AND PADS */
+
+}
+
+/* Mobile Portrait Size iphone 5 */
+@media only screen and (max-width: 319px) {
+
+    /* MARGINS AND PADS */
+    .p-menu {
+        padding-left: 2%;
+        padding-right: 0;
+    }
+    /* END OF MARGINS AND PADS */
+
+}
+/*END OF MEDIA QUERIES*/

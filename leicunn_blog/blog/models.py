@@ -4,8 +4,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
 from taggit.managers import TaggableManager
-
-
+import os
 
 
 class Author(AbstractUser):
@@ -15,7 +14,9 @@ class Author(AbstractUser):
 
     location = models.CharField("Location", max_length=50, null=True)
 
-    image = models.ImageField("Profile Picture", upload_to='profile/', blank=True, null=False)
+    image = models.ForeignKey('Media', on_delete=models.PROTECT, related_name="profilepic", blank=False, null=True)
+
+    # cover = models.ForeignKey('Media', on_delete=models.PROTECT, related_name="authorcover", blank=False, null=True)
 
     website = models.URLField(default="https://www.leicunnstudio.com", blank=False, max_length=100)
 
@@ -44,7 +45,8 @@ class Category(models.Model):
 
     author = models.ForeignKey(
         get_user_model(),
-        on_delete=models.CASCADE
+        default="Anonymous",
+        on_delete=models.SET_DEFAULT
     )
 
     slug = models.SlugField(unique=True, blank=True)
@@ -61,6 +63,53 @@ class Category(models.Model):
 
     def __str__(self):
         return f'{self.category}'
+
+
+class Media(models.Model):
+    description = models.CharField('Media Description', max_length=120, help_text='* Required. Maximum 120 Characters', blank=False)
+
+    slug = models.SlugField(unique=True)
+
+    MEDIA_TYPE = (
+        ('Profile', 'Profile'),
+        ('Cover', 'Cover')
+    )
+    type = models.CharField(
+        'Media Type',
+        max_length=7,
+        choices=MEDIA_TYPE,
+        blank=False,
+        default='Cover',
+        help_text='* Required'
+    )
+
+    image = models.ImageField('Image', upload_to='images/', blank=True, null=False)
+
+    created = models.DateTimeField(auto_now_add=True)
+
+    author = models.ForeignKey(
+        get_user_model(),
+        default="Anonymous",
+        on_delete=models.SET_DEFAULT
+    )
+
+    class Meta:
+        ordering = ['-created']
+
+    def __str__(self):
+        return f'{self.pk}'
+
+    def get_absolute_url(self):
+        return reverse_lazy('media')
+
+    def delete(self, *args, **kwargs):
+        # You have to prepare what you need before delete the model
+        storage = self.image.storage
+        path = self.image.path
+        # Delete the model before the file
+        super(Media, self).delete(*args, **kwargs)
+        # Delete the file after the model
+        storage.delete(path)
 
 
 class Post(models.Model):
@@ -83,14 +132,14 @@ class Post(models.Model):
         max_length=9,
         choices=POST_STATUS,
         blank=False,
-        default='d',
+        default='Draft',
         help_text='* Required'
     )
 
     category = models.ForeignKey(
-        'Category', on_delete=models.CASCADE, blank=False)
+        'Category', on_delete=models.PROTECT, blank=False, default='1')
 
-    cover = models.ImageField('Cover Image', upload_to='cover/', help_text="Select a cover image preferably 1280 by 720 pixels", null=False)
+    cover = models.ForeignKey('Media', on_delete=models.PROTECT)
 
     created = models.DateTimeField(auto_now_add=True)
 
@@ -98,13 +147,14 @@ class Post(models.Model):
 
     author = models.ForeignKey(
         get_user_model(),
-        on_delete=models.CASCADE
+        default="Anonymous",
+        on_delete=models.SET_DEFAULT
     )
 
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
 
     class Meta:
-        ordering = ['updated']
+        ordering = ['-created']
 
     def __str__(self):
         return self.slug
@@ -112,9 +162,76 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('posts')
 
-    # def save(self, *args, **kwargs):
-    #     if self.slug == None or self.slug == '':
-    #         self.slug = slugify(self.title)
-    #     else:
-    #         self.slug = self.slug
-    #     super(Post, self).save(*args, **kwargs)
+
+class Quote(models.Model):
+    quote = models.CharField(max_length=180, help_text="* Required", blank=False)
+
+    owner = models.CharField('Said By', max_length=100, help_text="* Required", blank=True, null=False)
+
+    created = models.DateTimeField(auto_now_add=True)
+
+    author = models.ForeignKey(
+        get_user_model(),
+        default="Anonymous",
+        on_delete=models.SET_DEFAULT
+    )
+
+    def save(self, *args, **kwargs):
+        if self.owner == None or self.owner == '':
+            self.owner = "Anonymous"
+        else:
+            self.owner = self.owner
+        super(Quote, self).save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['-created']
+
+    def __str__(self):
+        return self.pk
+
+    def get_absolute_url(self):
+        return reverse('quote')
+
+
+class Comment(models.Model):
+    content = models.TextField('Comment', blank=False, help_text='Comment * Required', max_length=500)
+
+    name = models.CharField('Name', max_length=60, blank=False, help_text='Name * Required')
+
+    email = models.EmailField('E-mail Address', max_length=100, blank=False, help_text="E-mail Address * Required")
+
+    image = models.CharField("Image", max_length=23, null=False)
+
+    website = models.URLField("Website", help_text='Website (Optional)', blank=True, max_length=100)
+
+    COMMENT_STATUS = (
+        ('Show', 'Show'),
+        ('Hide', 'Hide')
+    )
+    status = models.CharField(
+        max_length=4,
+        choices=COMMENT_STATUS,
+        blank=False,
+        default='Hide'
+    )
+
+    created = models.DateTimeField(auto_now_add=True)
+
+    author = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        on_delete=models.SET_NULL
+    )
+
+    post = models.ForeignKey('Post', on_delete=models.CASCADE, blank=False, related_name='comments')
+
+    parent = models.ForeignKey('self', null=True, blank=True, default=None, on_delete=models.SET_NULL, related_name='replies')
+
+    class Meta:
+        ordering = ['-created']
+
+    def __str__(self):
+        return str(self.pk)
+
+    def get_absolute_url(self):
+        return reverse('comments')

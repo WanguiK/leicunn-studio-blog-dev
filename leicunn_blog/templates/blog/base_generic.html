@@ -1,0 +1,131 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    {% block meta_description %} {% endblock meta_description %}
+
+    {% block meta_keywords %} {% endblock meta_keywords %}
+    
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="cache-control" content="public">
+
+    {% block meta_title %} {% endblock meta_title %}
+    <meta property="og:image" content="{% static 'images/logo.png' %}">
+
+    <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
+
+    {% block title %} {% endblock title %}
+
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Fontawesome -->
+    <link href="{% static 'fontawesome/css/all.min.css' %}" rel="stylesheet">
+
+    <!--Import Materialize CSS-->
+    <link type="text/css" rel="stylesheet" href="{% static 'materialize/css/materialize.min.css' %}" media="screen,projection" />
+
+    <!-- Common styles -->
+    <link rel="stylesheet" href="{% static 'css/common.css' %}" />
+
+    <!-- Custom styles -->
+    {% block customcss %} {% endblock customcss %}
+
+</head>
+
+<body>
+
+{% block menu %}{% endblock menu %}
+
+{% block content %} {% endblock content %}
+
+
+<!-- SUBSCRIBE -->
+<div id="subscribe" class="left">
+    <h3 class="nunito grey-text text-lighten-4">Subscribe To Our <span class="turqoise">Awesome</span> Newsletter.</h3>
+    <form action="https://leicunnstudio.us4.list-manage.com/subscribe/post?u=32b62c45ed077ffb443012189&amp;id=d8d84c2bd8" method="post" target="_blank">
+        {% csrf_token %}
+        <div class="input-field">
+            <input placeholder="E-mail Address" id="email" class="lato left-align" name="EMAIL" type="email" required><br/><br/>
+
+            <button class="lato btn-large btn white" type="submit" name="subscribe">SUBSCRIBE</button>
+        </div>
+    </form>
+</div>
+<!-- END OF SUBSCRIBE -->
+
+
+<!-- FOOTER -->
+<footer class="page-footer white">
+    <div class="container">
+        <div class="row center-align">
+            <div class="col l4 xl3 m12 s12 left-align">
+                <h5><img src="{% static 'images/blog-logo.png' %}" alt="" /></h5>
+                <p class="black-text nunito">Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition.</p>
+            </div>
+
+            <div class="col l2 xl3 m12 s12 left-align">
+                <h5 class="grey-text text-darken-2 lato">TOPICS</h5>
+                <ul>
+                    {% for cat in categories %}
+                        <li><a class="nunito black-text" href="{% url 'categoryarticles' slug=cat.slug %}">{{ cat.category | title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="col l2 xl3 m12 s12 left-align">
+                <h5 class="grey-text text-darken-2 lato">CONNECT</h5>
+                <ul>
+                    <li><a href="mailto:leicunn@leicunnstudio.com" class="nunito black-text btn"><i class="fas fa-envelope left"></i>E-Mail</a></li>
+                    <li><a href="https://www.facebook.com/LeicunnStudio/" class="nunito black-text btn"><i class="fab fa-facebook-f left"></i>Facebook</a></li>
+                    <li><a class="nunito black-text btn" href="https://www.instagram.com/leicunn.studio/"><i class="fab fa-instagram left"></i>Instagram</a></li>
+                    <li><a class="nunito black-text btn" href="https://twitter.com/leicunnstudio"><i class="fab fab fa-twitter left"></i>Twitter</a></li>
+                    <li><a class="nunito black-text btn" href="https://www.linkedin.com/company/leicunnstudio"><i class="fab fa-linkedin-in left"></i>LinkedIn</a></li>
+                </ul>
+            </div>
+
+            <div class="col l4 xl3 m12 s12 left-align">
+                <h5 class="grey-text text-darken-2 nunito">TAGS</h5>
+                <ul>
+
+                    {% for tag in common_tags %}
+                        <li><a class="nunito grey-text text-darken-2" href="{% url 'tag' slug=tag.slug %}">{{ tag | title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    <div class="footer-copyright grey lighten-4">
+        <div class="container center-align">
+            <p class="black-text lato">&copy; 2018 - {% now "Y" %} <span class="lombok">LEICUNN STUDIO</span></p>
+        </div>
+    </div>
+</footer>
+<!-- END OF FOOTER -->
+
+<!-- =============JavaScript=================== -->
+<!-- JQuery  -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+
+<!-- Waypoints JS -->
+{% block waypoints %}{% endblock waypoints %}
+
+<!-- Materialize JS -->
+<script src="{% static 'materialize/js/materialize.min.js' %}"></script>
+
+<!-- JavaScript -->
+<script src="{% static 'js/common.js' %}"></script>
+
+{% block customjs %} {% endblock customjs %}
+
+</body>
+
+</html>
