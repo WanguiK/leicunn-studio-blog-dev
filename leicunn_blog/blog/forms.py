@@ -39,7 +39,7 @@ class AuthorChangeForm(UserChangeForm):
 
     class Meta:
         model = Author
-        fields = ('first_name', 'last_name', 'email', 'position', 'location', 'image', 'website', 'twitter', 'instagram', 'linkedin', 'description', 'article')
+        fields = ('first_name', 'last_name', 'email', 'position', 'location', 'image', 'website', 'twitter', 'instagram', 'linkedin', 'description', 'article', 'cover', 'tags')
 
 
 class CategoryForm(ModelForm):
@@ -86,7 +86,7 @@ class QuoteForm(ModelForm):
 
 
 class CommentForm(ModelForm):
-    
+
     class Meta:
         model = Comment
         fields = '__all__'
@@ -95,3 +95,10 @@ class CommentForm(ModelForm):
     # def __init__(self, *args, **kwargs):
     #     super(CommentForm, self).__init__(*args, **kwargs)
     #     self.fields['parent'].queryset = Comment.objects.filter(status="Show", replies=None)
+
+
+class OpinionForm(ModelForm):
+
+    class Meta:
+        model = Opinions
+        fields = '__all__'

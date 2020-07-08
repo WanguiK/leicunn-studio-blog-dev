@@ -42,7 +42,7 @@ $(document).ready(function(){
 
     $("#discuss form").submit(function(e){
         var id = $('#id_post').val();
-        var url = '/add_comment/'+ id +'/';
+        var url = '/add_opinion/'+ id +'/';
         e.preventDefault();
         $.ajax({
             url: url,

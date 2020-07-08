@@ -17,7 +17,7 @@ $(document).ready(function () {
     $("#delete").click(function() {
 
         if($("input[type='radio']").is(':checked')) {
-            
+
             var pk = $("input[type='radio']:checked").val();
             var titleid = "#quote"+pk+" .owner";
             var title = $(titleid).text();
@@ -49,7 +49,7 @@ $(document).ready(function () {
             });
         }
     });
-    
+
     function deletePost(pk){
         $.ajax({
             url : "/quote/delete/"+pk+"/",
@@ -85,7 +85,7 @@ $(document).ready(function () {
                 icon: "error"
             });
         }
-        
+
     });
 
 });

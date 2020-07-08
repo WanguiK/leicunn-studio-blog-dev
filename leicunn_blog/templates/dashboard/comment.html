@@ -37,7 +37,7 @@
 
 {% block mainContent %}
 <div class="row mt-5">
-    <div class="col-xl-12 mb-5 mb-xl-0">
+    <div class="col-xl-9 mb-5 mb-xl-0">
         <div class="card shadow">
             <div class="card-header border-0">
                 <div class="row align-items-center">
@@ -45,29 +45,24 @@
                         <h3 class="mb-0">All Comments</h3>
                     </div>
                     <div class="col text-right">
-                        <!-- <a href="#!" id="edit" type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#commentChanges">
-                            Edit
-                        </a> -->
                         <a href="#!" id="edit" class="btn btn-sm btn-info">Edit</a>
+                        <a href="#!" id="reply" class="btn btn-sm btn-primary">Reply</a>
                         <a href="#!" id="delete" class="btn btn-sm btn-danger">Delete</a>
                     </div>
                 </div>
             </div>
             <div class="table-responsive">
-                <!-- Projects table -->
                 <table class="table align-items-center table-flush">
                     <thead class="thead-light">
                         <tr>
                             <th>
                                 <div class="mb-3"></div>
                             </th>
-                            <th scope="col" class="text-center">Author</th>
                             <th scope="col">Name</th>
                             <th scope="col">Comment</th>
                             <th scope="col" class="text-center">Replies</th>
                             <th scope="col">Post</th>
                             <th scope="col">E-Mail & Website</th>
-                            <th scope="col" class="text-center">Respond</th>
                             <th scope="col">Date & Status</th>
                         </tr>
                     </thead>
@@ -81,15 +76,12 @@
                                     <label class="custom-control-label" for="comment-{{ c.id }}"></label>
                                 </div>
                             </td>
-                            <td class="text-center author">
-                                {% if c.author %}
+                            <td class="text-capitalize"  id="commenter{{ c.id }}">
+                                {{ c.name }}{% if c.author %}
                                     <i class="fas fa-user-check text-primary"></i>
                                 {% endif %}
                             </td>
-                            <td class="text-capitalize"  id="commenter{{ c.id }}">
-                                {{ c.name }}
-                            </td>
-                            <td class="text-break comment">
+                            <td class="comment">
                                 <strong>{{ c.content }}</strong>
                             </td>
                             <td class="text-center">
@@ -104,14 +96,11 @@
                                     {{ c.post.title | title }}
                                 </a>
                             </td>
-                            <td class="mail">
+                            <td class="text-break mail">
                                 <a href="mailto:{{ c.email }}" class="text-primary" target="_blank">{{ c.email }}</a>
                                 {% if c.website %}
                                     <br/><a href="{{ c.website }}" target="_blank" class="text-primary">{{ c.website }}</a>
                                 {% endif %}
-                            </td>
-                            <td class="text-center">
-                                <i class="fas fa-retweet text-purple"></i>
                             </td>
                             <td class="text-capitalize">
                                 {{ c.created | date:"D d M Y" }}<br/> <strong>|</strong> {{ c.status }}
@@ -123,105 +112,155 @@
             </div>
         </div>
     </div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="commentChanges" tabindex="-1" role="dialog" aria-labelledby="makeCommentChanges" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="makeCommentChanges">Make Changes To Comment</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+    <div class="col-xl-3">
+        <div class="card bg-secondary shadow">
+            <div class="card-header border-0">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0">{{ jumbo }}</h3>
+                    </div>
+                </div>
             </div>
+            <div class="card-body">
+                <form action="" method="POST" id="form">
+                    {% csrf_token %}
+                    {% for hidden_field in form.hidden_fields %}
+                        {{ hidden_field }}
+                    {% endfor %}
+    
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span class="alert-inner--icon"><i class="fas fa-exclamation-circle"></i></span>
+                        <span class="alert-inner--text"><strong>Error!</strong> {{ form.non_field_errors.as_text }}</span>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endif %}
+    
+                    {% if form.errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span class="alert-inner--icon"><i class="fas fa-exclamation-circle"></i></span>
+                        <span class="alert-inner--text"><strong>Error!</strong> {{ form.errors.as_text }}</span>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endif %}
 
-            <form action="" method="POST" id="form">
-                {% csrf_token %}
-                {% for hidden_field in form.hidden_fields %}
-                    {{ hidden_field }}
-                {% endfor %}
-
-                {% if form.non_field_errors %}
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <span class="alert-inner--icon"><i class="fas fa-exclamation-circle"></i></span>
-                    <span class="alert-inner--text"><strong>Error!</strong> {{ form.non_field_errors.as_text }}</span>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                {% endif %}
-
-                {% if form.errors %}
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <span class="alert-inner--icon"><i class="fas fa-exclamation-circle"></i></span>
-                    <span class="alert-inner--text"><strong>Error!</strong> {{ form.errors.as_text }}</span>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                {% endif %}
-
-                <div class="modal-body bg-secondary">
-
-                    <div class="row">
-
-                        <div class="col-lg-12">
-                            <div class="form-group">
-                                <label class="form-control-label" for="{{ form.content.id_for_label }}">Comment</label>
-                                <textarea rows="4" id="{{ form.content.id_for_label }}" class="form-control form-control-alternative" name="{{ form.content.name }}" maxlength="{{ form.content.field.max_length }}"
-                                placeholder="{{ form.content.help_text }}" required>{{ form.content.value | default_if_none:'' }}</textarea>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-8">
-                            <div class="form-group">
-                                <label class="form-control-label" for="{{ form.name.id_for_label }}">Name</label>
-                                <input type="text" id="{{ form.name.id_for_label }}" name="{{ form.name.name }}" maxlength="{{ form.name.field.max_length }}" class="text-capitalize form-control form-control-alternative" placeholder="{{ form.name.help_text }}" value="{{ form.name.value | default_if_none:'' }}" required >
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4">
-                            <div class="form-group">
-                                <label class="form-control-label" for="{{ form.status.id_for_label }}">Status</label>
-                                <select name="{{ form.status.name }}" class="form-control form-control-alternative text-capitalize" id="{{ form.status.id_for_label }}">
-                                    {% for choice in form.status.field.choices %}
-                                        <option class="text-capitalize" value="{{ choice.0 }}"
-                                            {% ifequal form.status.value choice.0 %}
-                                                selected="selected"
-                                            {% endifequal %}
-                                        >{{ choice.1 }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label class="form-control-label" for="{{ form.email.id_for_label }}">E-Mail Address</label>
-                                <input type="email" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" maxlength="{{ form.email.field.max_length }}" class="text-capitalize form-control form-control-alternative" placeholder="{{ form.email.help_text }}" value="{{ form.email.value | default_if_none:'' }}" required >
-                            </div>
-                        </div>
-
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label class="form-control-label" for="{{ form.website.id_for_label }}">Website</label>
-                                <input type="text" id="{{ form.website.id_for_label }}" name="{{ form.website.name }}" maxlength="{{ form.website.field.max_length }}" class="text-capitalize form-control form-control-alternative" placeholder="{{ form.website.help_text }}" value="{{ form.website.value | default_if_none:'' }}" required >
-                            </div>
-                        </div>
-
+                    <div class="alert alert-primary fade show displaycomment" role="alert" style="display: none;">
+                        <span class="alert-inner--text">
+                            <strong>@
+                                <span id="name"></span>
+                            </strong><br/><br/>
+                            Comment: <strong id="content"></strong></span>
                     </div>
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" id="saveChanges">Save Changes</button>
-                </div>
+                    <div class="bg-secondary">
 
-            </form>
+                        <div class="row">
 
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.post.id_for_label }}">Post</label>
+                                    <select disabled name="{{ form.post.name }}" class="form-control form-control-alternative text-capitalize" id="{{ form.post.id_for_label }}">
+                                        {% for choice in form.post.field.choices %}
+                                            <option class="text-capitalize" value="{{ choice.0 }}"
+                                                {% ifequal form.post.value choice.0 %}
+                                                    selected="selected"
+                                                {% endifequal %}
+                                            >{{ choice.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.parent.id_for_label }}">Replying To</label>
+                                    <select disabled name="{{ form.parent.name }}" class="form-control form-control-alternative text-capitalize" id="{{ form.parent.id_for_label }}">
+                                        {% for choice in form.parent.field.choices %}
+                                            <option class="text-capitalize" value="{{ choice.0 }}"
+                                                {% ifequal form.parent.value choice.0 %}
+                                                    selected="selected"
+                                                {% endifequal %}
+                                            >{{ choice.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.author.id_for_label }}">Author</label>
+                                    <select disabled name="{{ form.author.name }}" class="form-control form-control-alternative text-capitalize" id="{{ form.author.id_for_label }}">
+                                        {% for choice in form.author.field.choices %}
+                                            <option class="text-capitalize" value="{{ choice.0 }}"
+                                            {% ifequal user.username choice.0 %}
+                                                selected="selected"
+                                            {% endifequal %}
+                                            >{{ choice.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.content.id_for_label }}">Comment</label>
+                                    <textarea rows="4" id="{{ form.content.id_for_label }}" class="form-control form-control-alternative" name="{{ form.content.name }}" maxlength="{{ form.content.field.max_length }}"
+                                    placeholder="{{ form.content.help_text }}" required>{{ form.content.value | default_if_none:'' }}</textarea>
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.name.id_for_label }}">Name</label>
+                                    <input readonly type="text" id="{{ form.name.id_for_label }}" name="{{ form.name.name }}" maxlength="{{ form.name.field.max_length }}" class="text-capitalize form-control form-control-alternative" placeholder="{{ form.name.help_text }}" value="{{ user.get_full_name }}" required >
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.status.id_for_label }}">Status</label>
+                                    <select name="{{ form.status.name }}" class="form-control form-control-alternative text-capitalize" id="{{ form.status.id_for_label }}">
+                                        {% for choice in form.status.field.choices %}
+                                            <option class="text-capitalize" value="{{ choice.0 }}"
+                                                {% ifequal form.status.value choice.0 %}
+                                                    selected="selected"
+                                                {% endifequal %}
+                                            >{{ choice.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.email.id_for_label }}">E-Mail Address</label>
+                                    <input readonly type="email" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" maxlength="{{ form.email.field.max_length }}" class="form-control form-control-alternative" placeholder="{{ form.email.help_text }}" value="{{ user.email }}" required >
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="form-control-label" for="{{ form.website.id_for_label }}">Website</label>
+                                    <input readonly type="text" id="{{ form.website.id_for_label }}" name="{{ form.website.name }}" maxlength="{{ form.website.field.max_length }}" class="form-control form-control-alternative" placeholder="{{ form.website.help_text }}" value="{{ user.website }}" required >
+                                </div>
+                            </div>
+    
+                        </div>
+    
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="saveChanges">Save Changes</button>
+                    </div>
+    
+                </form>
+
+            </div>
         </div>
     </div>
 </div>
-<!-- End of Modal -->
 {% endblock mainContent %}

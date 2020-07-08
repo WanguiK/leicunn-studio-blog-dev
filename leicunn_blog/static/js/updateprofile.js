@@ -4,10 +4,16 @@ $(document).ready(function () {
         autogrow: true
     });
 
-    $("#selectCover").click(function() {
+    $("#selectProfile").click(function() {
         var pk = $(".modal .modal-body input[type='radio']:checked").val();
         $('#id_image').val(pk);
-        $('#selectImage').modal('hide');
+        $('#profileImage').modal('hide');
+    });
+
+    $("#selectCover").click(function() {
+        var pk = $(".modal .modal-body input[type='radio']:checked").val();
+        $('#id_cover').val(pk);
+        $('#coverImage').modal('hide');
     });
 
 });

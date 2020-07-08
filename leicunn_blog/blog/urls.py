@@ -36,6 +36,12 @@ urlpatterns = [
 
     path('read/<slug:slug>/', views.PostDetailView.as_view(), name='read'),
 
+    path('add_comment/<int:pk>/', views.add_comment, name='add_comment'),
+
+    path('author/<slug:slug>/', views.AuthorDetailView.as_view(), name='author'),
+
+    path('add_opinion/<str:pk>/', views.create_opinion, name='create_opinion'),
+
     path('tag/<slug:slug>/', views.tagged, name='tag'),
 
     path('', views.index, name='index'),
@@ -45,9 +51,11 @@ urlpatterns = [
 
     path('search/', views.SearchResultsView.as_view(), name='search'),
 
-    path('comments/', views.CommentManage.as_view(), name='comments'),
+    # path('comments/', views.CommentManage.as_view(), name='comments'),
 
-    path('editcomment/<int:pk>/', views.edit_comment, name='editcomment'),
+    # path('comment/<slug:slug>/', views.post_comment, name='post_comment'),
 
-    path('comment/delete/<int:pk>/', views.delete_comment, name='deletecomment'),
+    # path('editcomment/<int:pk>/', views.edit_comment, name='editcomment'),
+
+    # path('comment/delete/<int:pk>/', views.delete_comment, name='deletecomment'),
 ]

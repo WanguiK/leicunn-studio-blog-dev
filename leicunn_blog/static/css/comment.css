@@ -4,24 +4,29 @@
     padding: 1em;
 }
 
-table tr td.comment,
-table tr td.post {
-    white-space: normal;
-    word-wrap: break-word;
+.card .table td, 
+.card .table th {
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
-table tr td.author {
-    width: 30px !important;
+.card .table td.comment {
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    width: 700% !important;
 }
 
-table tr td.comment {
-    width: 60% !important;
+.card .table td.post {
+    width: 400% !important;
 }
 
-table tr td.post {
-    width: 30% !important;
+.card .table td.post a {
+    white-space: pre-wrap !important;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
 }
 
-table tr td.mail {
-    width: 80% !important;
+form .alert.displaycomment {
+    padding: .4em .8em;
 }

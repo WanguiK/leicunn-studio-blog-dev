@@ -21,7 +21,11 @@
 {% endblock customjs %}
 
 {% block header %}
-<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 600px; background-image: url({% static 'images/profile-cover.jpg' %}); background-size: cover; background-position: center top;">
+{% if author.cover %}
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 650px; background-image: url('{{ author.cover.image.url }}'); background-size: 100% 100%; background-position: center top;">
+{% else %}
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 600px; background-image: url('/static/images/profile-cover.jpg'); background-size: cover; background-position: center top;">
+{% endif %}
     <!-- Mask -->
     <span class="mask bg-gradient-default opacity-8"></span>
     <!-- Header container -->
@@ -35,7 +39,7 @@
                 {% endif %}
                 <p class="text-white mt-0 mb-5">This is your profile page. You can see the progress you've made
                     with your work and manage your projects or assigned tasks</p>
-                <a href="#!" class="btn btn-info">View Profile</a>
+                <a href="{% url 'author' slug=author.slug %}" target="_blank" class="btn btn-info">View Profile</a>
             </div>
         </div>
     </div>
@@ -94,7 +98,7 @@
                     </div>
                     <hr class="my-4" />
                     <p>{{ author.description }}</p>
-                    <a class="text-primary" href="#">Show more</a>
+                    <a class="text-primary" target="_blank" href="{% url 'author' slug=author.slug %}">Show more</a>
                 </div>
             </div>
         </div>
@@ -170,21 +174,37 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="form-control-label" for="{{ form.location.id_for_label }}">Location</label>
                                     <input type="text" id="{{ form.location.id_for_label }}" class="form-control form-control-alternative" name="{{ form.location.name }}" maxlength="{{ form.location.field.max_length }}" placeholder="{{ form.location.help_text }}" value="{{ form.location.value | default_if_none:'' }}" required>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
-                                <br/><div class="form-group">
-                                    <a href="#!" type="button" class="btn btn-primary" data-toggle="modal" data-target="#selectImage">
+                            <div class="col-lg-4">
+                                <br/><div class="form-group float-md-right">
+                                    <a href="#!" type="button" class="btn btn-primary" data-toggle="modal" data-target="#profileImage">
                                         Select Your Profile Photo
                                     </a>
                                     <select name="{{ form.image.name }}" class="d-none form-control form-control-alternative text-capitalize" id="{{ form.image.id_for_label }}">
                                         {% for choice in form.image.field.choices %}
                                             <option class="text-capitalize" value="{{ choice.0 }}"
                                                 {% ifequal form.image.value choice.0 %}
+                                                    selected="selected"
+                                                {% endifequal %}
+                                            >{{ choice.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <br/><div class="form-group float-md-right">
+                                    <a href="#!" type="button" class="btn btn-primary" data-toggle="modal" data-target="#coverImage">
+                                        Select Your Cover Photo
+                                    </a>
+                                    <select name="{{ form.cover.name }}" class="d-none form-control form-control-alternative text-capitalize" id="{{ form.cover.id_for_label }}">
+                                        {% for choice in form.cover.field.choices %}
+                                            <option class="text-capitalize" value="{{ choice.0 }}"
+                                                {% ifequal form.cover.value choice.0 %}
                                                     selected="selected"
                                                 {% endifequal %}
                                             >{{ choice.1 }}</option>
@@ -240,29 +260,77 @@
                             <label class="form-control-label" for="{{ form.article.id_for_label }}">About Me</label>
                             <textarea rows="6" class="form-control form-control-alternative" placeholder="{{ form.article.help_text }}" id="{{ form.article.id_for_label }}" name="{{ form.article.name }}" required>{{ form.article.value | default_if_none:'' }}</textarea>
                         </div>
+                        <div class="form-group">
+                            <label class="form-control-label" for="{{ form.tags.id_for_label }}">Tags</label>
+                            <input type="text" id="{{ form.tags.id_for_label }}" name="{{ form.tags.name }}"  class="form-control form-control-alternative" maxlength="{{ form.tags.field.max_length }}"
+                            value="{{ form.tags.value | default_if_none:'' }}" placeholder="{{ form.tags.help_text }}">
+                        </div>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-    
+
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="selectImage" tabindex="-1" role="dialog" aria-labelledby="selectImageTitle" aria-hidden="true">
+<div class="modal fade" id="profileImage" tabindex="-1" role="dialog" aria-labelledby="profleImageTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="selectImageTitle">Media Gallery</h4>
+                <h4 class="modal-title" id="profileImageTitle">Media Gallery</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body bg-secondary">
-            
+
                 <div class="row">
 
-                    {% for m in media %}
+                    {% for m in profilemedia %}
+                    <div class="col-md-4 pb-3" id="media{{ m.id }}">
+                        <div class="card">
+                            <img class="card-img-top" src="{{ m.image.url }}" alt="Card image cap">
+                            <div class="card-body">
+                                <div class="custom-control custom-radio pr-3">
+                                    <input name="rowimg" class="custom-control-input" value="{{ m.id }}" id="media-{{ m.id }}" type="radio">
+                                    <label class="card-title custom-control-label text-capitalize" for="media-{{ m.id }}">
+                                        <strong>{{ m.description }}</strong>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+    
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="selectProfile">Select Image</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="coverImage" tabindex="-1" role="dialog" aria-labelledby="coverImageTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="coverImageTitle">Media Gallery</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-secondary">
+
+                <div class="row">
+
+                    {% for m in covermedia %}
                     <div class="col-md-4 pb-3" id="media{{ m.id }}">
                         <div class="card">
                             <img class="card-img-top" src="{{ m.image.url }}" alt="Card image cap">

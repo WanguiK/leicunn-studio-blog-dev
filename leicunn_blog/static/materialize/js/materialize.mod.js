@@ -8155,6 +8155,8 @@ $jscomp.polyfill = function (e, r, p, m) {
         return;
       }
       $(this).closest('.chip').remove();
+      $(".thechip").remove();
+      $("#id_parent")[0].selectedIndex = 0;
     });
   });
 })(cash);

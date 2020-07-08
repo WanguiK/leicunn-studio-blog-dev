@@ -4,4 +4,5 @@ from .models import *
 
 admin.site.register(Category)
 admin.site.register(Author)
-# admin.site.register(Post)
+admin.site.register(Opinions)
+admin.site.register(Comment)
