@@ -1,0 +1,23 @@
+{% extends "common.html" %}
+
+{% load static %}
+
+{% block title %}
+<title>Oi! We are sorry. | Leicunn Studio Blog</title>
+{% endblock title %}
+
+{% block brand %}
+{% endblock brand %}
+
+{% block customcss %}
+<link href="{% static 'css/error500.css' %}" rel="stylesheet" />
+{% endblock customcss %}
+
+{% block customjs %}
+<script src="{% static 'js/error.js' %}"></script>
+{% endblock customjs %}
+
+
+{% block content %}
+<div class="container-fluid"></div>
+{% endblock content %}

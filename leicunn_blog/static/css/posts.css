@@ -6,7 +6,28 @@
 
 table tr td.title,
 table tr td.tag {
-    width: 200px !important;
     white-space: normal;
     word-wrap: break-word;
+}
+
+table tr td.title {
+    width: 300px !important;
+}
+
+table tr td.tag {
+    width: 200px !important;
+}
+
+@keyframes highlight {
+    0% {
+        background: #e9ecef;
+    }
+    100% {
+        background: none;
+    }
+}
+
+.card .table tbody tr[id^="post"]:target {
+    animation: highlight 5s;
+    transition: animation 0.15s ease;
 }

@@ -1,10 +1,24 @@
 .table-responsive {
-    height: 750px !important;
+    max-height: 820px !important;
     overflow: scroll;
     padding: 1em;
 }
 
-.card .table td, 
+@keyframes highlight {
+    0% {
+        background: #e9ecef;
+    }
+    100% {
+        background: none;
+    }
+}
+
+.card .table tbody tr[id^="comment"]:target {
+    animation: highlight 6s;
+    transition: animation 0.2s ease;
+}
+
+.card .table td,
 .card .table th {
     padding-left: 1rem;
     padding-right: 1rem;
@@ -14,15 +28,15 @@
     white-space: normal !important;
     overflow-wrap: break-word !important;
     word-wrap: break-word !important;
-    width: 700% !important;
+    width: 600px !important;
 }
 
 .card .table td.post {
-    width: 400% !important;
+    width: 350px !important;
 }
 
 .card .table td.post a {
-    white-space: pre-wrap !important;
+    white-space: normal;
     overflow-wrap: break-word !important;
     word-wrap: break-word !important;
 }

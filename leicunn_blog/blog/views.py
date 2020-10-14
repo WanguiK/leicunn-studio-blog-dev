@@ -1,12 +1,18 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, request
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, request, HttpRequest
 from django.contrib.auth import get_user_model
 from django.db.models import Count
 from django.core.paginator import Paginator
 from django.views.generic.edit import UpdateView, CreateView, FormMixin
-from django.views.generic.detail import DetailView, SingleObjectMixin
+from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.forms import PasswordResetForm
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
+from django.template import Context
+# from django.core.mail import EmailMessage
 from datetime import datetime, timedelta
 from django.urls import reverse
 from django.template.defaultfilters import slugify
@@ -21,14 +27,6 @@ from blog.forms import *
 from blog.models import *
 
 
-@login_required
-def dashboard(request):
-    context = {
-        'pagename': "Dashboard"
-    }
-    return render(request, 'dashboard/dashboard.html', context)
-
-
 class UpdateAuthor(UpdateView):
     model = get_user_model()
     form_class = AuthorChangeForm
@@ -39,12 +37,59 @@ class UpdateAuthor(UpdateView):
         context = super(UpdateAuthor, self).get_context_data(**kwargs)
         context['author'] = self.model.objects.get(username=self.request.user)
         context['pagename'] = 'User Profile'
-        #this is what related_name is for
-        profilemedia = Media.objects.filter(type="Profile", post=None, profilepic=None)
-        covermedia = Media.objects.filter(type="Author Cover", post=None, profilepic=None)
-        context['profilemedia'] = profilemedia
-        context['covermedia'] = covermedia
+        # Count the comments and opinions from user
+        comments = Comment.objects.filter(author=self.request.user).count()
+        opinions = Opinion.objects.filter(is_author='Yes').count()
+        numComments = comments + opinions
+        # Count posts from the user
+        numPosts = Post.objects.filter(author=self.request.user).count()
+        context['comments'] = numComments
+        context['posts'] = numPosts
+        context['opinionform'] = OpinionForm()
+        context.update(get_author_media())
         return context
+
+
+@login_required #Author create own opinion
+def author_add_opinion(request):
+    if request.method == 'POST':
+        form = OpinionForm(request.POST)
+        if form.is_valid():
+            opinion = form.save(commit=False)
+            current = request.user
+            image = str(current.image.image.url)
+
+            opinion.name = str(current.get_full_name())
+            opinion.email = str(current.email)
+            opinion.image = image
+            opinion.website = str(current.website)
+            opinion.is_author = 'Yes'
+            opinion.post = current
+            opinion.save()
+            title = str(current.first_name) + " added an opinion"
+            notif = {
+                'identity': opinion.pk,
+                'title': title,
+                'message': opinion.content,
+                'notif_type': 'Opinion',
+                'link': '/opinions/#comment'+str(opinion.pk),
+                'author': current
+            }
+            create_notification(1, **notif)
+            return redirect('opinions')
+    else:
+        form = OpinionForm()
+    return redirect('opinions')
+
+
+def get_author_media():
+    profilemedia = Media.objects.filter(type="Profile", profilepic=None)
+    covermedia = Media.objects.filter(type="Author Cover", authorcover=None)
+    context = {
+        'profilemedia': profilemedia,
+        'covermedia': covermedia
+    }
+    return context
 
 
 # class CategoryCreate(PermissionRequiredMixin, CreateView):
@@ -91,7 +136,7 @@ class EditCategory(UpdateView):
     login_required = True
     # permission_required = 'blog.can_add_post' and 'blog.can_change_post'
     template_name = 'dashboard/category.html'
-    fields = ['category', 'description', 'slug']
+    fields = ['category', 'description', 'slug', 'show']
 
     def get_context_data(self, **kwargs):
         context = super(EditCategory, self).get_context_data(**kwargs)
@@ -207,16 +252,29 @@ class PostCreate(CreateView):
 
         newpost.save()
         form.save_m2m()
+        title = str(newpost.author.first_name) + " published a post"
+        notif = {
+            'identity': newpost.pk,
+            'title': title,
+            'message': newpost.title,
+            'notif_type': 'Post',
+            'link': '/allposts/#post'+str(newpost.pk),
+            'author': newpost.author
+        }
+        create_notification(1, **notif)
         return super(PostCreate, self).form_valid(form)
 
 
 @login_required
 def view_posts(request):
-    posts = Post.objects.order_by('-updated')
+    posts = Post.objects.order_by('-updated').prefetch_related('comments')
+    form = CommentForm()
     context = {
         'posts' : posts,
-        'pagename' : "All Posts"
+        'pagename' : "All Posts",
+        'form': form
     }
+    print("\n\n"+str(posts)+"\n\n")
     return render(request, 'dashboard/posts.html', context)
 
 
@@ -230,6 +288,51 @@ def delete_posts(request, pk):
         return JsonResponse(posts, safe=False)
     else:
         return render(request, 'dashboard/posts.html', {'posts':Post.objects.order_by('-updated')})
+
+
+@login_required
+def get_post(request, pk):
+    p = Post.objects.filter(pk=pk).values('title', 'summary')
+    context = {}
+    if request.method == 'GET':
+        post = list(p)
+        context = {
+            'data': post
+        }
+    return JsonResponse(context)
+
+
+@login_required #Author create comment
+def author_add_comment(request, pk):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            current = request.user
+            image = str(current.image.image.url)
+            post = Post.objects.get(pk=pk)
+
+            comment.name = str(current.get_full_name())
+            comment.email = str(current.email)
+            comment.image = image
+            comment.website = str(current.website)
+            comment.author = current
+            comment.post = post
+            comment.save()
+            title = str(current.first_name) + " added a comment"
+            notif = {
+                'identity': comment.pk,
+                'title': title,
+                'message': comment.content,
+                'notif_type': 'Comment',
+                'link': '/comments/#comment'+str(comment.pk),
+                'author': current
+            }
+            create_notification(1, **notif)
+            return redirect('comments')
+    else:
+        form = CommentForm()
+    return redirect('comments')
 
 
 # class EditPost(PermissionRequiredMixin, UpdateView):
@@ -310,17 +413,18 @@ def delete_quote(request, pk):
 
 
 def load_menu():
-    cat_count = Category.objects.all().count()
+    menu_display = Category.objects.filter(show='Yes')
+    cat_count = menu_display.count()
     half = None
 
     if cat_count % 2 == 0:
         half = cat_count / 2
-        left = Category.objects.all()[:half]
-        right = Category.objects.all()[half:cat_count]
+        left = menu_display[:half]
+        right = menu_display[half:cat_count]
     else:
         half = cat_count / 2 + 1
-        left = Category.objects.all()[:half]
-        right = Category.objects.all()[half:cat_count]
+        left = menu_display[:half]
+        right = menu_display[half:cat_count]
 
     context = {
         'left_menu': left,
@@ -330,7 +434,7 @@ def load_menu():
 
 
 def load_bookmarks():
-    categories = Category.objects.all()
+    categories = Category.objects.filter(show='Yes')
     tags = Post.tags.most_common()[:13]
 
     context = {
@@ -370,46 +474,6 @@ def get_prev_next(pk):
     return context
 
 
-# class PostDetailView(FormMixin, DetailView):
-#     model = Post
-#     form_class = CommentForm
-#     context_object_name = 'post'
-#     template_name = 'blog/read.html'
-
-#     def get_success_url(self):
-#         return reverse('read', kwargs={'slug': self.kwargs['slug']})
-
-#     def get_context_data(self, **kwargs):
-#         context = super(PostDetailView, self).get_context_data(**kwargs)
-#         pk = self.object.pk
-#         # context['comments'] = Comment.objects.filter(status__exact="Show", post=pk)
-#         context['comments'] = Comment.objects.filter(post=pk)
-#         # context['query'] = Comment.objects.filter(status="Show", replies=None, post=pk).values('pk')
-#         context['query'] = Comment.objects.filter(post=pk).values('pk')
-#         context.update(load_menu())
-#         context.update(load_bookmarks())
-#         context.update(get_prev_next(pk))
-#         context['form'] = CommentForm
-#         return context
-
-#     def post(self, request, *args, **kwargs):
-#         self.object = self.get_object()
-#         form = self.get_form()
-#         if form.is_valid():
-#             return self.form_valid(form)
-#         else:
-#             return self.form_invalid(form)
-
-#     def form_valid(self, form):
-#         postInstance = Post.objects.get(slug = self.kwargs['slug'])
-#         num = random.randint(1, 10)
-#         image = "/media/profiles/p"+str(num)+".png"
-#         form.instance.image = image
-#         form.instance.post = postInstance
-#         form.save()
-#         return super(PostDetailView, self).form_valid(form)
-
-
 class PostDetailView(DetailView):
     model = Post
     context_object_name = 'post'
@@ -418,10 +482,10 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         pk = self.object.pk
-        # context['comments'] = Comment.objects.filter(status__exact="Show", post=pk)
-        context['comments'] = Comment.objects.filter(post=pk)
-        # context['query'] = Comment.objects.filter(status="Show", post=pk).values('pk')
-        context['query'] = Comment.objects.filter(post=pk).values('pk')
+        context['comments'] = Comment.objects.filter(status__exact="Show", post=pk)
+        # context['comments'] = Comment.objects.filter(post=pk)
+        context['query'] = Comment.objects.filter(status__exact="Show", post=pk)
+        # context['query'] = Comment.objects.filter(post=pk).values('pk')
         context.update(load_menu())
         context.update(load_bookmarks())
         context.update(get_prev_next(pk))
@@ -439,41 +503,19 @@ def add_comment(request, pk):
             image = "/media/profiles/p"+str(num)+".png"
             comment.image = image
             comment.save()
+            title = comment.name.split(' ')[0]+" commented"
+            notif = {
+                'identity': comment.pk,
+                'title': title,
+                'message': comment.content,
+                'notif_type': 'Comment',
+                'link': '/comments/#comment'+str(comment.pk)
+            }
+            create_notification(0, **notif)
             return redirect('read', slug=slug)
     else:
         form = CommentForm()
     return redirect('read', slug=slug)
-
-
-# def post_detail(request, slug):
-#     """Show entry for single topic"""
-#     post = Post.objects.get(slug=slug)
-#     query = Comment.objects.filter(post=post.pk).values('pk')
-#     comments = Comment.objects.filter(post=post.pk)
-
-#     if request.method == 'POST':
-#         form = CommentForm(request.POST)
-#         if form.is_valid():
-#             new_comment = form.save(commit=False)
-#             num = random.randint(1, 10)
-#             image = "/media/profiles/p"+str(num)+".png"
-#             new_comment.image = image
-#             new_comment.post = post
-#             new_comment.save()
-#             return HttpResponseRedirect(reverse('read:slug'))
-#     else:
-#         form = CommentForm()
-
-#     context = {
-#         'post': post,
-#         'comments': comments,
-#         'form': form,
-#         'query': query
-#     }
-#     context.update(load_menu())
-#     context.update(load_bookmarks())
-#     context.update(get_prev_next(post.pk))
-#     return render(request, 'blog/read.html', context)
 
 
 class AuthorDetailView(DetailView):
@@ -485,13 +527,13 @@ class AuthorDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         work = Post.objects.filter(author=self.object.pk)[:2]
         tag = self.object.tags.split()
-        opinions = Opinions.objects.filter(post=self.object)
+        opinions = Opinion.objects.filter(status__exact="Show", post=self.object)
         form = OpinionForm()
         context['form'] = form
         context['work'] = work
         context['tag'] = tag
         context['opinions'] = opinions
-        context['query'] = Opinions.objects.filter(post=self.object).values('pk')
+        context['query'] = Opinion.objects.filter(post=self.object).values('pk')
         context.update(load_menu())
         context.update(load_bookmarks())
         return context
@@ -507,78 +549,19 @@ def create_opinion(request, pk):
             image = "/media/profiles/p"+str(num)+".png"
             opinion.image = image
             opinion.save()
+            title = opinion.name.split(' ')[0]+" sent a message"
+            notif = {
+                'identity': opinion.pk,
+                'title': title,
+                'message': opinion.content,
+                'notif_type': 'Opinion',
+                'link': '/opinions/#comment'+str(opinion.pk)
+            }
+            create_notification(0, **notif)
             return redirect('author', slug=slug)
     else:
         form = OpinionForm()
     return redirect('author', slug=slug)
-
-
-# def author_detail(request, slug):
-#     post = get_user_model().objects.get(slug=slug)
-#     work = Post.objects.filter(author=post.pk)[:2]
-#     tag = post.tags
-#     tag = tag.split()
-#     opinions = Opinions.objects.filter(post=post)
-
-#     if request.method == 'POST':
-#         form =  OpinionForm(request.POST)
-#         if form.is_valid():
-#             num = random.randint(1, 10)
-#             image = "/media/profiles/p"+str(num)+".png"
-#             opinion = form.save(commit=False)
-#             opinion.image = image
-#             opinion.post = post
-#             opinion.save()
-#             return redirect('author', slug=post.slug)
-#     else:
-#         form = OpinionForm()
-
-#     context = {
-#         'post': post,
-#         'work': work,
-#         'tag': tag,
-#         'opinions': opinions,
-#         'form': form
-#     }
-#     context.update(load_menu())
-#     context.update(load_bookmarks())
-#     return render(request, 'blog/author.html', context)
-
-
-# def post_comment(request, slug):
-#     article = get_object_or_404(Post, slug=slug)
-#     if request.method == 'POST':
-#         comment_form = CommentForm(request.POST)
-#         if comment_form.is_valid():
-#             new_comment = comment_form.save(commit=False)
-#             num = random.randint(1, 10)
-#             image = "/media/profiles/p"+str(num)+".png"
-#             new_comment.image = image
-#             new_comment.post = article.pk
-#             new_comment.save()
-#             return redirect(article)
-#         else:
-#             return HttpResponse("The form is incorrect")
-#     else:
-#         return HttpResponse("Comment only accept POST request")
-
-
-# def post_detail(request, slug):
-#     post = Post.objects.get(slug=slug)
-#     pk = post.pk
-#     comments = Comment.objects.filter(post=pk)
-#     query = Comment.objects.filter(post=pk).values('pk')
-#     form = CommentForm(request.POST)
-#     context = {
-#         'comment': comments,
-#         'query': query,
-#         'post': post,
-#         'form': form
-#     }
-#     context.update(load_menu())
-#     context.update(load_bookmarks())
-#     context.update(get_prev_next(pk))
-#     return render(request, 'blog/read.html', context)
 
 
 def tagged(request, slug):
@@ -665,88 +648,386 @@ class SearchResultsView(generic.ListView):
         return context
 
 
-# class CommentManage(CreateView):
-#     model = Comment
-#     form_class = CommentForm
-#     login_required = True
-#     # permission_required = 'blog.can_add_post'
-#     template_name = 'dashboard/comment.html'
+class CommentManage(ListView):
+    model = Comment
+    context_object_name = 'comments'
+    template_name = 'dashboard/comment.html'
+    # paginate_by = 25
 
-#     def get_success_url(self):
-#         return reverse('comments')
-
-#     def get_context_data(self, **kwargs):
-#         context = super(CommentManage, self).get_context_data(**kwargs)
-#         context['pagename'] = 'Comments'
-#         context['jumbo'] = 'Reply To A Comment'
-#         table = Comment.objects.all()
-#         context['comments'] = table
-#         return context
-
-#     def form_valid(self, form):
-#         image = str(request.user.image.image.url)
-#         form.instance.image = image
-#         print(image)
-#         form.save()
-#         return super(CommentManage, self).form_valid(form)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pagename'] = 'Comments'
+        context['jumbo'] = 'Reply To A Comment'
+        context['form'] = CommentForm()
+        return context
 
 
-# # class EditComment(PermissionRequiredMixin, UpdateView):
-# class EditComment(UpdateView):
-#     model = Comment
-#     login_required = True
-#     # permission_required = 'blog.can_add_post' and 'blog.can_change_post'
-#     template_name = 'dashboard/comment.html'
-#     form_class = CommentForm
+@login_required
+def get_comment(request, pk):
+    c = Comment.objects.filter(pk=pk).values('content', 'name')
+    context = {}
+    if request.method == 'GET':
+        comment = list(c)
+        context = {
+            'data': comment
+        }
+    print(context)
+    return JsonResponse(context)
 
-#     def get_context_data(self, **kwargs):
-#         context = super(EditComment, self).get_context_data(**kwargs)
-#         context['pagename'] = 'Comments'
-#         context['jumbo'] = 'Edit A Comment'
-#         table = Comment.objects.all()
-#         context['comments'] = table
-#         return context
 
-#     def form_valid(self, form):
-#         form.save()
-#         return super(EditComment, self).form_valid(form)
+@login_required
+def delete_comment(request, pk):
+    c = Comment.objects.get(pk=pk)
+    if request.method == 'POST':
+        c.delete()
+        cObjs = Comment.objects.all().values()
+        comments = list(cObjs)
+        return JsonResponse(comments, safe=False)
+    else:
+        return render(request, 'dashboard/comment.html', {'comments':Comment.objects.all()})
+
+
+@login_required
+def reply(request, pk):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            current = request.user
+            image = str(current.image.image.url)
+            parent = Comment.objects.get(pk=pk)
+            post_id = Comment.objects.only('post').get(pk=pk).post_id
+            post = Post.objects.get(pk=post_id)
+
+            comment.name = str(current.get_full_name())
+            comment.email = str(current.email)
+            comment.image = image
+            comment.website = str(current.website)
+            comment.author = current
+            comment.post = post
+            comment.parent = parent
+            comment.save()
+            title = str(current.first_name) + " replied to a comment"
+            notif = {
+                'identity': comment.pk,
+                'title': title,
+                'message': comment.content,
+                'notif_type': 'Comment',
+                'link': '/comments/#comment'+str(comment.pk),
+                'author': current
+            }
+            create_notification(1, **notif)
+            return redirect('comments')
+    else:
+        form = CommentForm()
+    return redirect('comments')
+
+
+@login_required
+def get_edit_comment(request, pk):
+    reply = ''
+    c = Comment.objects.filter(pk=pk).values('pk', 'content', 'name', 'email', 'website', 'status', 'parent', 'post', 'author', 'image')
+    post = Comment.objects.only('post').get(pk=pk).post_id
+    title = list(Post.objects.filter(pk=post).values('title'))
+
+    if Comment.objects.filter(pk=pk).values('parent') != None:
+        p = Comment.objects.only('parent').get(pk=pk).parent_id
+        reply = list(Comment.objects.filter(pk=p).values('content', 'name'))
+
+    context = {}
+    if request.method == 'GET':
+        comment = list(c) + title
+        context = {
+            'data': comment,
+            'reply': reply
+        }
+    return JsonResponse(context)
+
+
+@login_required
+def edit_comment(request, pk):
+    c = Comment.objects.get(pk=pk)
+    form = CommentForm(request.POST or None, instance=c)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('comments'))
+        cObjs = Comment.objects.all().values()
+        comments = list(cObjs)
+        return JsonResponse(comments, safe=False)
+    else:
+        return render(request, 'dashboard/comment.html', {'comments': Comment.objects.all()})
+
+# Opinion
+class OpinionManage(ListView):
+    model = Opinion
+    context_object_name = 'opinions'
+    template_name = 'dashboard/opinion.html'
+    # paginate_by = 25
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pagename'] = 'Opinions'
+        context['sectionname'] = 'Opinions | Messages'
+        context['jumbo'] = 'Reply To A Comment'
+        context['form'] = OpinionForm()
+        return context
+
+
+@login_required
+def get_opinion(request, pk):
+    o = Opinion.objects.filter(pk=pk).values('content', 'name')
+    context = {}
+    if request.method == 'GET':
+        opinion= list(o)
+        context = {
+            'data': opinion
+        }
+    return JsonResponse(context)
+
+
+@login_required
+def delete_opinion(request, pk):
+    o = Opinion.objects.get(pk=pk)
+    if request.method == 'POST':
+        o.delete()
+        opObjs = Opinion.objects.all().values()
+        opinions = list(opObjs)
+        return JsonResponse(opinions, safe=False)
+    else:
+        return render(request, 'dashboard/opinion.html', {'opinions':Opinion.objects.all()})
+
+
+@login_required
+def reply_opinion(request, pk):
+    if request.method == 'POST':
+        form = OpinionForm(request.POST)
+        if form.is_valid():
+            opinion = form.save(commit=False)
+            current = request.user
+            image = str(current.image.image.url)
+            parent = Opinion.objects.get(pk=pk)
+            post_id = Opinion.objects.only('post').get(pk=pk).post_id
+            post = get_user_model().objects.get(pk=post_id)
+            opinion.name = str(current.get_full_name())
+            opinion.email = str(current.email)
+            opinion.image = image
+            opinion.website = str(current.website)
+            opinion.is_author = 'Yes'
+            opinion.post = post
+            opinion.parent = parent
+            opinion.save()
+            title = str(current.first_name) + " replied to a message"
+            notif = {
+                'identity': opinion.pk,
+                'title': title,
+                'message': opinion.content,
+                'notif_type': 'Opinion',
+                'link': '/opinions/#comment'+str(opinion.pk),
+                'author': current
+            }
+            create_notification(1, **notif)
+            return redirect('opinions')
+    else:
+        form = OpinionForm()
+    return redirect('opinions')
+
+
+@login_required
+def get_edit_opinion(request, pk):
+    reply = ''
+    o = Opinion.objects.filter(pk=pk).values('pk', 'content', 'name', 'email', 'website', 'status', 'parent', 'post', 'is_author', 'image')
+
+    post = Opinion.objects.only('post').get(pk=pk).post_id
+    fname = get_user_model().objects.only('first_name').get(pk=post).first_name
+    lname = get_user_model().objects.only('last_name').get(pk=post).last_name
+    authorr = fname + " " + lname
+    title = "Know Our Authors: " + authorr
+
+    if Opinion.objects.filter(pk=pk).values('parent') != None:
+        p = Opinion.objects.only('parent').get(pk=pk).parent_id
+        reply = list(Opinion.objects.filter(pk=p).values('content', 'name'))
+
+    context = {}
+    if request.method == 'GET':
+        opinion = list(o)
+        context = {
+            'data': opinion,
+            'reply': reply,
+            'title': title
+        }
+    return JsonResponse(context)
+
+
+@login_required
+def edit_opinion(request, pk):
+    o = Opinion.objects.get(pk=pk)
+    form = OpinionForm(request.POST or None, instance=o)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('opinions'))
+        opObjs = Opinion.objects.all().values()
+        opinion = list(opObjs)
+        return JsonResponse(opinion, safe=False)
+    else:
+        return render(request, 'dashboard/opinion.html', {'opinion': Opinion.objects.all()})
+
+
+def create_notification(check, **data):
+    checker = check
+    n = None
+    try:
+        if checker == 0:
+            n = Notification(
+                identity = data['identity'],
+                title = data['title'],
+                message = data['message'],
+                notif_type = data['notif_type'],
+                link = data['link']
+            )
+        elif checker == 1:
+            n = Notification(
+                identity = data['identity'],
+                title = data['title'],
+                message = data['message'],
+                notif_type = data['notif_type'],
+                link = data['link'],
+                author = data['author']
+            )
+        n.save()
+    except Exception as e:
+        print("\n\nSave Notification ERROR: "+str(e)+"\n\n")
+
+
+@login_required
+def dashboard(request):
+    notifications = Notification.objects.all()
+    count = Notification.objects.filter(seen=0).count()
+    now = datetime.now()
+    print(now)
+    context = {
+        'pagename': "Dashboard",
+        'notifications': notifications,
+        'new': count,
+        'time_now': now
+    }
+    return render(request, 'dashboard/dashboard.html', context)
+
+
+@login_required
+def delete_notification(request):
+    notif = request.POST['pk']
+    n = Notification.objects.get(pk=notif)
+    if request.method == 'POST':
+        n.delete()
+        nObjs = Notification.objects.all().values()
+        notifications = list(nObjs)
+        return JsonResponse(notifications, safe=False)
+    else:
+        return render(request, 'dashboard/dashboard.html', {'notifications':Notification.objects.all()})
+
+
+@login_required
+def read_status_notif(request):
+    notif = request.POST['pk']
+    new = request.POST['status']
+    n = Notification.objects.get(pk=notif)
+    if request.method == 'POST':
+        n.seen = new
+        n.save()
+        nObjs = Notification.objects.all().values()
+        notifications = list(nObjs)
+        return JsonResponse(notifications, safe=False)
+    else:
+        return render(request, 'dashboard/dashboard.html', {'notifications': Notification.objects.all()})
 
 
 # @login_required
-# def edit_comment(request, pk):
-#     c = Comment.objects.get(pk=pk)
-#     form = CommentForm(request.POST or None, instance=c)
-#     if request.method == 'POST':
-#         if form.is_valid():
-#             form.save()
-#             return reverse('comments')
-#         cObjs = Comment.objects.all().values()
-#         comments = list(cObjs)
-#         return JsonResponse(comments, safe=False)
-#     else:
-#         return render(request, 'dashboard/comment.html', {'comments':Comment.objects.all()})
+def sendRegisterMail(email, name, uname):
+    form = PasswordResetForm({'email': email})
+
+    subject = 'Welcome To Leicunn Studio Blog'
+    from_email = 'no-reply@leicunnstudio.com'
+    to = email
+    context = {
+        'firstname': name,
+        'username': uname
+    }
+    email_template_name = render_to_string('mail/mail.html', context)
+    template_name = render_to_string('mail/mail.html', context)
+
+    if form.is_valid():
+        request = HttpRequest()
+        request.META['SERVER_NAME'] = '127.0.0.1'
+        request.META['SITE_ID'] = 'Leicunn Studio Blog'
+        # request.META['SERVER_PORT'] = '443'
+        request.META['SERVER_PORT'] = '80'
+        send_mail(subject, template_name, from_email, [to], fail_silently=False, html_message=email_template_name)
+        form.save(
+            request = request,
+            use_https = False,
+            from_email = from_email,
+            html_email_template_name = 'registration/password_reset_email.html',
+            email_template_name = 'registration/password_reset_email.html'
+        )
 
 
-# @login_required
-# def get_comment(request, pk):
-#     c = Comment.objects.filter(pk=pk).values()
-#     context = {}
-#     if request.method == 'GET':
-#         comment = list(c)
-#         context = {
-#             'data': comment
-#         }
-#     print(context)
-#     return JsonResponse(context)
+def generate_username(fname, lname):
+    uname = fname + lname[0:3]
+    username = uname.lower()
+    return username
 
 
-# @login_required
-# def delete_comment(request, pk):
-#     c = Comment.objects.get(pk=pk)
-#     if request.method == 'POST':
-#         c.delete()
-#         cObjs = Comment.objects.all().values()
-#         comments = list(cObjs)
-#         return JsonResponse(comments, safe=False)
-#     else:
-#         return render(request, 'dashboard/comment.html', {'comments':Comment.objects.all()})
+class Register(CreateView):
+    model = get_user_model()
+    form_class = AuthorCreationForm
+    login_required = True
+    template_name = 'dashboard/register.html'
+
+    def get_success_url(self):
+        return reverse('register')
+
+    def get_context_data(self, **kwargs):
+        context = super(Register, self).get_context_data(**kwargs)
+        context['pagename'] = 'Create User'
+        context['jumbo'] = 'Create New Accounts'
+        context['jumbomessage'] = 'Create new authors for your blog'
+        context['users'] = Author.objects.exclude(username=self.request.user).values('pk', 'first_name', 'last_name', 'username', 'slug', 'email', 'website', 'twitter', 'instagram', 'linkedin')
+        context.update(get_author_media())
+        return context
+
+    def form_valid(self, form):
+        emailAddress = str(form.cleaned_data['email'])
+        first_name = str(form.cleaned_data['first_name'])
+        last_name = str(form.cleaned_data['last_name'])
+        username = str(generate_username(first_name, last_name))
+        newUser = form.save(commit = False)
+        newUser.username = username
+        newUser.is_superuser = False
+        newUser.is_staff = True
+        newUser.is_active = True
+        newUser.save()
+        sendRegisterMail(emailAddress, first_name, username)
+        return super(Register, self).form_valid(form)
+
+
+@login_required
+def delete_author(request, slug):
+    u = Author.objects.get(slug=slug)
+    if request.method == 'POST':
+        u.delete()
+        uObjs = Author.objects.exclude(username=request.user).values('first_name', 'last_name', 'username', 'slug', 'email', 'website', 'twitter', 'instagram', 'linkedin')
+        users = list(uObjs)
+        return JsonResponse(users, safe=False)
+    else:
+        userss = Author.objects.exclude(username=request.user).values('first_name', 'last_name', 'username', 'slug', 'email', 'website', 'twitter', 'instagram', 'linkedin')
+        return render(request, 'dashboard/quotes.html', {'users':userss})
+
+
+def error404(request, exception):
+    return render(request, '404.html', status=404)
+
+
+def error500(request):
+    return render(request, '500.html', status=500)

@@ -1,6 +1,7 @@
 {% extends "blog/base_generic.html" %}
 
 {% load static %}
+{% load humanize %}
 
 {% block meta_description %}
 <meta name="description" content="">
@@ -41,104 +42,97 @@
 {% block content %}
 <!-- JUMBO -->
 <div class="row" id="jumbo">
-    <div class="col m12 l4 xl4 s12">
 
-        <a href="{% url 'read' slug=posts.0.slug %}">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.0.cover.image.url }}" alt="{{ posts.0.cover.description }}">
-                    <div class="card-title">
-                        <div class="cont">
-                            <button class="btn grey darken-4 white-text capitalize lato btn-large turqoise">{{ posts.0.category | upper }}</button>
-                            <div>
-                                <h1 class="zilla center-align">
-                                    {{ posts.0.title | title }}
-                                </h1>
-                                <p class="center-align lato" style="color: #bebebe;">By
-                                    <span style="color: #f5f5f5;">{{ posts.0.author.get_full_name | title }}</span>
-                                    <i class="material-icons">arrow_forward_ios</i>
-                                    {% if posts.0.created.date == today.date %}
-                                        Today
-                                    {% elif posts.0.created.date == yestarday.date %}
-                                        Yestarday
-                                    {% else %}
-                                        {{ posts.0.created | date:"F j" }}<sup>{{ posts.0.created | date:"S" }}</sup>, {{ posts.0.created | date:"Y" }}
-                                    {% endif %}
-                                </p>
+    {% if posts.0 %}
+        <div class="col m12 l4 xl4 s12">
+
+            <a href="{% url 'read' slug=posts.0.slug %}">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.0.cover.image.url }}" alt="{{ posts.0.cover.description }}">
+                        <div class="card-title">
+                            <div class="cont">
+                                <button class="btn grey darken-4 white-text capitalize lato btn-large turqoise">{{ posts.0.category | upper }}</button>
+                                <div>
+                                    <h1 class="zilla center-align">
+                                        {{ posts.0.title | title }}
+                                    </h1>
+                                    <p class="center-align lato" style="color: #bebebe;">By
+                                        <span style="color: #f5f5f5;">{{ posts.0.author.get_full_name | title }}</span>
+                                        <i class="material-icons">arrow_forward_ios</i>
+                                        {{ posts.0.created|naturalday:'F jS, Y'|title }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </a>
+            </a>
 
-    </div>
+        </div>
+    {% endif %}
 
-    <div class="col m12 xl4 l4 s12">
 
-        <a href="{% url 'read' slug=posts.1.slug %}">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.1.cover.image.url }}" alt="{{ posts.1.cover.description }}">
-                    <div class="card-title">
-                        <div class="cont center">
-                            <button class="btn grey darken-4 white-text capitalize lato btn-large turqoise">{{ posts.1.category | upper }}</button>
-                            <div>
-                                <h1 class="zilla center-align">
-                                    {{ posts.1.title | title }}
-                                </h1>
-                                <p class="center-align lato" style="color: #bebebe;">By
-                                    <span style="color: #f5f5f5;">{{ posts.1.author.get_full_name | title }}</span>
-                                    <i class="material-icons">arrow_forward_ios</i>
-                                    {% if posts.1.created.date == today.date %}
-                                        Today
-                                    {% elif posts.1.created.date == yestarday.date %}
-                                        Yestarday
-                                    {% else %}
-                                        {{ posts.1.created | date:"F j" }}<sup>{{ posts.1.created | date:"S" }}</sup>, {{ posts.1.created | date:"Y" }}
-                                    {% endif %}
-                                </p>
+    {% if posts.1 %}
+        <div class="col m12 xl4 l4 s12">
+
+            <a href="{% url 'read' slug=posts.1.slug %}">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.1.cover.image.url }}" alt="{{ posts.1.cover.description }}">
+                        <div class="card-title">
+                            <div class="cont center">
+                                <button class="btn grey darken-4 white-text capitalize lato btn-large turqoise">{{ posts.1.category | upper }}</button>
+                                <div>
+                                    <h1 class="zilla center-align">
+                                        {{ posts.1.title | title }}
+                                    </h1>
+                                    <p class="center-align lato" style="color: #bebebe;">By
+                                        <span style="color: #f5f5f5;">{{ posts.1.author.get_full_name | title }}</span>
+                                        <i class="material-icons">arrow_forward_ios</i>
+                                        {{ posts.1.created|naturalday:'F jS, Y'|title }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </a>
+            </a>
 
-    </div>
+        </div>
+    {% endif %}
 
-    <div class="col m12 xl4 l4 s12">
 
-        <a href="{% url 'read' slug=posts.2.slug %}">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.2.cover.image.url }}" alt="{{ posts.2.cover.description }}">
-                    <div class="card-title">
-                        <div class="cont">
-                            <button class="btn grey darken-4 white-text capitalize lato btn-large turqoise">{{ posts.2.category | upper }}</button>
-                            <div>
-                                <h1 class="zilla center-align">
-                                    {{ posts.2.title | title }}
-                                </h1>
-                                <p class="center-align lato" style="color: #bebebe;">By
-                                    <span style="color: #f5f5f5;">{{ posts.2.author.get_full_name | title }}</span>
-                                    <i class="material-icons">arrow_forward_ios</i>
-                                    {% if posts.2.created.date == today.date %}
-                                        Today
-                                    {% elif posts.2.created.date == yestarday.date %}
-                                        Yestarday
-                                    {% else %}
-                                        {{ posts.2.created | date:"F j" }}<sup>{{ posts.2.created | date:"S" }}</sup>, {{ posts.2.created | date:"Y" }}
-                                    {% endif %}
-                                </p>
+    {% if posts.2 %}
+        <div class="col m12 xl4 l4 s12">
+
+            <a href="{% url 'read' slug=posts.2.slug %}">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.2.cover.image.url }}" alt="{{ posts.2.cover.description }}">
+                        <div class="card-title">
+                            <div class="cont">
+                                <button class="btn grey darken-4 white-text capitalize lato btn-large turqoise">{{ posts.2.category | upper }}</button>
+                                <div>
+                                    <h1 class="zilla center-align">
+                                        {{ posts.2.title | title }}
+                                    </h1>
+                                    <p class="center-align lato" style="color: #bebebe;">By
+                                        <span style="color: #f5f5f5;">{{ posts.2.author.get_full_name | title }}</span>
+                                        <i class="material-icons">arrow_forward_ios</i>
+                                        {{ posts.2.created|naturalday:'F jS, Y'|title }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </a>
+            </a>
 
-    </div>
+        </div>
+    {% endif %}
+
+
 </div>
 <!-- END OF JUMBO -->
 
@@ -148,124 +142,137 @@
 
     <div class="row">
 
-        <div class="col m12 xl4 l4 s12 col-normal">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.3.cover.image.url }}" alt="{{ posts.3.cover.description }}">
-                    <a href="{% url 'categoryarticles' slug=posts.3.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.3.category | upper }}</a>
-                    <a href="{% url 'read' slug=posts.3.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
-                        <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
-                    </a>
-                </div>
-                <div class="card-content">
-                    <p class="nunito" style="color: gray;">By
-                        <span class="grey-text text-darken-4">{{ posts.3.author.get_full_name | title }}</span>
-                        <i class="material-icons">arrow_forward_ios</i>
-                        {{ posts.3.created | date:"F j" }}<sup>{{ posts.3.created | date:"S" }}</sup>, {{ posts.3.created | date:"Y" }}
-                    </p>
-                    <h1 class="zilla capitalize">{{ posts.3.title | title }}</h1>
-                    <p class="nunito">{{ posts.3.summary }}</p>
-                    <a href="{% url 'read' slug=posts.3.slug %}" class="btn btn-large lato">READ MORE</a>
+        {% if posts.3 %}
+            <div class="col m12 xl4 l4 s12 col-normal">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.3.cover.image.url }}" alt="{{ posts.3.cover.description }}">
+                        <a href="{% url 'categoryarticles' slug=posts.3.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.3.category | upper }}</a>
+                        <a href="{% url 'read' slug=posts.3.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
+                            <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <p class="nunito" style="color: gray;">By
+                            <span class="grey-text text-darken-4">{{ posts.3.author.get_full_name | title }}</span>
+                            <i class="material-icons">arrow_forward_ios</i>
+                            {{ posts.3.created|naturalday:'F jS, Y'|title }}
+                        </p>
+                        <h1 class="zilla capitalize">{{ posts.3.title | title }}</h1>
+                        <p class="nunito justify_break">{{ posts.3.summary }}</p>
+                        <a href="{% url 'read' slug=posts.3.slug %}" class="btn btn-large lato">READ MORE</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
 
-        <div class="col m12 xl4 l4 s12 col-normal">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.4.cover.image.url }}" alt="{{ posts.4.cover.description }}">
-                    <a href="{% url 'categoryarticles' slug=posts.4.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.4.category | upper }}</a>
-                    <a href="{% url 'read' slug=posts.4.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
-                        <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
-                    </a>
-                </div>
-                <div class="card-content">
-                    <p class="nunito" style="color: gray;">By
-                        <span class="grey-text text-darken-4">{{ posts.4.author.get_full_name | title }}</span>
-                        <i class="material-icons">arrow_forward_ios</i>
-                        {{ posts.4.created | date:"F j" }}<sup>{{ posts.4.created | date:"S" }}</sup>, {{ posts.4.created | date:"Y" }}
-                    </p>
-                    <h1 class="zilla capitalize">{{ posts.4.title | title }}</h1>
-                    <p class="nunito">{{ posts.4.summary }}</p>
-                    <a href="{% url 'read' slug=posts.4.slug %}" class="btn btn-large lato">READ MORE</a>
-                </div>
-            </div>
-        </div>
 
-        <div class="col m12 xl4 l4 s12 col-normal">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.5.cover.image.url }}" alt="{{ posts.5.cover.description }}">
-                    <a href="{% url 'categoryarticles' slug=posts.5.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.5.category | upper }}</a>
-                    <a href="{% url 'read' slug=posts.5.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
-                        <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
-                    </a>
-                </div>
-                <div class="card-content">
-                    <p class="nunito" style="color: gray;">By
-                        <span class="grey-text text-darken-4">{{ posts.5.author.get_full_name | title }}</span>
-                        <i class="material-icons">arrow_forward_ios</i>
-                        {{ posts.5.created | date:"F j" }}<sup>{{ posts.5.created | date:"S" }}</sup>, {{ posts.5.created | date:"Y" }}
-                    </p>
-                    <h1 class="zilla capitalize">{{ posts.5.title | title }}</h1>
-                    <p class="nunito">{{ posts.5.summary }}</p>
-                    <a href="{% url 'read' slug=posts.5.slug %}" class="btn btn-large lato">READ MORE</a>
+        {% if posts.4 %}
+            <div class="col m12 xl4 l4 s12 col-normal">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.4.cover.image.url }}" alt="{{ posts.4.cover.description }}">
+                        <a href="{% url 'categoryarticles' slug=posts.4.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.4.category | upper }}</a>
+                        <a href="{% url 'read' slug=posts.4.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
+                            <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <p class="nunito" style="color: gray;">By
+                            <span class="grey-text text-darken-4">{{ posts.4.author.get_full_name | title }}</span>
+                            <i class="material-icons">arrow_forward_ios</i>
+                            {{ posts.4.created|naturalday:'F jS, Y'|title }}
+                        </p>
+                        <h1 class="zilla capitalize">{{ posts.4.title | title }}</h1>
+                        <p class="nunito justify_break">{{ posts.4.summary }}</p>
+                        <a href="{% url 'read' slug=posts.4.slug %}" class="btn btn-large lato">READ MORE</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
+
+
+        {% if posts.5 %}
+            <div class="col m12 xl4 l4 s12 col-normal">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.5.cover.image.url }}" alt="{{ posts.5.cover.description }}">
+                        <a href="{% url 'categoryarticles' slug=posts.5.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.5.category | upper }}</a>
+                        <a href="{% url 'read' slug=posts.5.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
+                            <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <p class="nunito" style="color: gray;">By
+                            <span class="grey-text text-darken-4">{{ posts.5.author.get_full_name | title }}</span>
+                            <i class="material-icons">arrow_forward_ios</i>
+                            {{ posts.5.created|naturalday:'F jS, Y'|title }}
+                        </p>
+                        <h1 class="zilla capitalize">{{ posts.5.title | title }}</h1>
+                        <p class="nunito justify_break">{{ posts.5.summary }}</p>
+                        <a href="{% url 'read' slug=posts.5.slug %}" class="btn btn-large lato">READ MORE</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
 
     </div>
 
     <!-- ROW TWO -->
     <div class="row row-feature">
 
-        <div class="col l7 m12 xl7 s12">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.6.cover.image.url }}" alt="{{ posts.6.cover.description }}">
-                    <div class="card-title">
-                        <div class="cont">
-                            <a href="{% url 'categoryarticles' slug=posts.6.category.slug %}" class="btn grey darken-4 white-text capitalize lato btn-large turqoise">{{ posts.6.category | upper }}</a>
-                            <a href="{% url 'read' slug=posts.6.slug %}" class="btn-floating waves-effect waves-light bg-turqoise right">
-                                <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
-                            </a>
-                            <div>
-                                <h1 class="zilla center-align">
-                                    {{ posts.6.title | title }}
-                                </h1>
-                                <p class="center-align lato" style="color: #bebebe;">By
-                                    <span style="color: #f5f5f5;">{{ posts.6.author.get_full_name | title }}</span>
-                                    <i class="material-icons">arrow_forward_ios</i>
-                                    {{ posts.6.created | date:"F j" }}<sup>{{ posts.6.created | date:"S" }}</sup>, {{ posts.6.created | date:"Y" }}
-                                </p>
+        {% if posts.6 %}
+            <div class="col l7 m12 xl7 s12">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.6.cover.image.url }}" alt="{{ posts.6.cover.description }}">
+                        <div class="card-title">
+                            <div class="cont">
+                                <a href="{% url 'categoryarticles' slug=posts.6.category.slug %}" class="btn grey darken-4 white-text capitalize lato btn-large turqoise">{{ posts.6.category | upper }}</a>
+                                <a href="{% url 'read' slug=posts.6.slug %}" class="btn-floating waves-effect waves-light bg-turqoise right">
+                                    <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
+                                </a>
+                                <div>
+                                    <h1 class="zilla center-align">
+                                        {{ posts.6.title | title }}
+                                    </h1>
+                                    <p class="center-align lato" style="color: #bebebe;">By
+                                        <span style="color: #f5f5f5;">{{ posts.6.author.get_full_name | title }}</span>
+                                        <i class="material-icons">arrow_forward_ios</i>
+                                        {{ posts.6.created|naturalday:'F jS, Y'|title }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
 
-        <div class="col l5 m12 xl5 s12 col-normal">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.7.cover.image.url }}" alt="{{ posts.7.cover.description }}">
-                    <a href="{% url 'categoryarticles' slug=posts.7.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.7.category | upper }}</a>
-                    <a href="{% url 'read' slug=posts.7.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
-                        <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
-                    </a>
-                </div>
-                <div class="card-content">
-                    <p class="nunito" style="color: gray;">By
-                        <span class="grey-text text-darken-4">{{ posts.7.author.get_full_name | title }}</span>
-                        <i class="material-icons">arrow_forward_ios</i>
-                        {{ posts.7.created | date:"F j" }}<sup>{{ posts.7.created | date:"S" }}</sup>, {{ posts.7.created | date:"Y" }}
-                    </p>
-                    <h1 class="zilla capitalize">{{ posts.7.title | title }}</h1>
-                    <p class="nunito">{{ posts.7.summary }}</p>
-                    <a href="{% url 'read' slug=posts.7.slug %}" class="btn btn-large lato">READ MORE</a>
+
+        {% if posts.7 %}
+            <div class="col l5 m12 xl5 s12 col-normal">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.7.cover.image.url }}" alt="{{ posts.7.cover.description }}">
+                        <a href="{% url 'categoryarticles' slug=posts.7.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.7.category | upper }}</a>
+                        <a href="{% url 'read' slug=posts.7.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
+                            <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <p class="nunito" style="color: gray;">By
+                            <span class="grey-text text-darken-4">{{ posts.7.author.get_full_name | title }}</span>
+                            <i class="material-icons">arrow_forward_ios</i>
+                            {{ posts.7.created|naturalday:'F jS, Y'|title }}
+                        </p>
+                        <h1 class="zilla capitalize">{{ posts.7.title | title }}</h1>
+                        <p class="nunito justify_break">{{ posts.7.summary }}</p>
+                        <a href="{% url 'read' slug=posts.7.slug %}" class="btn btn-large lato">READ MORE</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
 
     </div>
     <!-- ROW TWO -->
@@ -273,71 +280,79 @@
     <!-- ROW THREE -->
     <div class="row">
 
-        <div class="col m12 xl4 l4 s12 col-normal">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.8.cover.image.url }}" alt="{{ posts.8.cover.description }}">
-                    <a href="{% url 'categoryarticles' slug=posts.8.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.8.category | upper }}</a>
-                    <a href="{% url 'read' slug=posts.8.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
-                        <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
-                    </a>
-                </div>
-                <div class="card-content">
-                    <p class="nunito" style="color: gray;">By
-                        <span class="grey-text text-darken-4">{{ posts.8.author.get_full_name | title }}</span>
-                        <i class="material-icons">arrow_forward_ios</i>
-                        {{ posts.8.created | date:"F j" }}<sup>{{ posts.8.created | date:"S" }}</sup>, {{ posts.8.created | date:"Y" }}
-                    </p>
-                    <h1 class="zilla capitalize">{{ posts.8.title | title }}</h1>
-                    <p class="nunito">{{ posts.8.summary }}</p>
-                    <a href="{% url 'read' slug=posts.8.slug %}" class="btn btn-large lato">READ MORE</a>
+        {% if posts.8 %}
+            <div class="col m12 xl4 l4 s12 col-normal">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.8.cover.image.url }}" alt="{{ posts.8.cover.description }}">
+                        <a href="{% url 'categoryarticles' slug=posts.8.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.8.category | upper }}</a>
+                        <a href="{% url 'read' slug=posts.8.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
+                            <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <p class="nunito" style="color: gray;">By
+                            <span class="grey-text text-darken-4">{{ posts.8.author.get_full_name | title }}</span>
+                            <i class="material-icons">arrow_forward_ios</i>
+                            {{ posts.8.created|naturalday:'F jS, Y'|title }}
+                        </p>
+                        <h1 class="zilla capitalize">{{ posts.8.title | title }}</h1>
+                        <p class="nunito justify_break">{{ posts.8.summary }}</p>
+                        <a href="{% url 'read' slug=posts.8.slug %}" class="btn btn-large lato">READ MORE</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
 
-        <div class="col m12 xl4 l4 s12 col-normal">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.9.cover.image.url }}" alt="{{ posts.9.cover.description }}">
-                    <a href="{% url 'categoryarticles' slug=posts.9.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.9.category | upper }}</a>
-                    <a href="{% url 'read' slug=posts.9.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
-                        <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
-                    </a>
-                </div>
-                <div class="card-content">
-                    <p class="nunito" style="color: gray;">By
-                        <span class="grey-text text-darken-4">{{ posts.9.author.get_full_name | title }}</span>
-                        <i class="material-icons">arrow_forward_ios</i>
-                        {{ posts.9.created | date:"F j" }}<sup>{{ posts.9.created | date:"S" }}</sup>, {{ posts.9.created | date:"Y" }}
-                    </p>
-                    <h1 class="zilla capitalize">{{ posts.9.title | title }}</h1>
-                    <p class="nunito">{{ posts.9.summary }}</p>
-                    <a href="{% url 'read' slug=posts.9.slug %}" class="btn btn-large lato">READ MORE</a>
-                </div>
-            </div>
-        </div>
 
-        <div class="col m12 xl4 l4 s12 col-normal">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.10.cover.image.url }}" alt="{{ posts.10.cover.description }}">
-                    <a href="{% url 'categoryarticles' slug=posts.10.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.10.category | upper }}</a>
-                    <a href="{% url 'read' slug=posts.10.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
-                        <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
-                    </a>
-                </div>
-                <div class="card-content">
-                    <p class="nunito" style="color: gray;">By
-                        <span class="grey-text text-darken-4">{{ posts.10.author.get_full_name | title }}</span>
-                        <i class="material-icons">arrow_forward_ios</i>
-                        {{ posts.10.created | date:"F j" }}<sup>{{ posts.10.created | date:"S" }}</sup>, {{ posts.10.created | date:"Y" }}
-                    </p>
-                    <h1 class="zilla capitalize">{{ posts.10.title | title }}</h1>
-                    <p class="nunito">{{ posts.10.summary }}</p>
-                    <a href="{% url 'read' slug=posts.10.slug %}" class="btn btn-large lato">READ MORE</a>
+        {% if posts.9 %}
+            <div class="col m12 xl4 l4 s12 col-normal">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.9.cover.image.url }}" alt="{{ posts.9.cover.description }}">
+                        <a href="{% url 'categoryarticles' slug=posts.9.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.9.category | upper }}</a>
+                        <a href="{% url 'read' slug=posts.9.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
+                            <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <p class="nunito" style="color: gray;">By
+                            <span class="grey-text text-darken-4">{{ posts.9.author.get_full_name | title }}</span>
+                            <i class="material-icons">arrow_forward_ios</i>
+                            {{ posts.9.created|naturalday:'F jS, Y'|title }}
+                        </p>
+                        <h1 class="zilla capitalize">{{ posts.9.title | title }}</h1>
+                        <p class="nunito justify_break">{{ posts.9.summary }}</p>
+                        <a href="{% url 'read' slug=posts.9.slug %}" class="btn btn-large lato">READ MORE</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
+
+
+        {% if posts.10 %}
+            <div class="col m12 xl4 l4 s12 col-normal">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.10.cover.image.url }}" alt="{{ posts.10.cover.description }}">
+                        <a href="{% url 'categoryarticles' slug=posts.10.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.10.category | upper }}</a>
+                        <a href="{% url 'read' slug=posts.10.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
+                            <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <p class="nunito" style="color: gray;">By
+                            <span class="grey-text text-darken-4">{{ posts.10.author.get_full_name | title }}</span>
+                            <i class="material-icons">arrow_forward_ios</i>
+                            {{ posts.10.created|naturalday:'F jS, Y'|title }}
+                        </p>
+                        <h1 class="zilla capitalize">{{ posts.10.title | title }}</h1>
+                        <p class="nunito justify_break">{{ posts.10.summary }}</p>
+                        <a href="{% url 'read' slug=posts.10.slug %}" class="btn btn-large lato">READ MORE</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
 
     </div>
     <!-- END OF ROW THREE -->
@@ -360,130 +375,145 @@
 
         </div>
 
-        <!-- display on large screens only -->
-        <div class="col l8 xl8 hide-on-med-and-down">
 
-            <div class="card horizontal">
-                <div class="card-image">
-                    <img src="{{ posts.11.cover.image.url }}" alt="{{ posts.11.cover.description }}">
+        {% if posts.11 %}
+            <!-- display on large screens only -->
+            <div class="col l8 xl8 hide-on-med-and-down">
+
+                <div class="card horizontal">
+                    <div class="card-image">
+                        <img src="{{ posts.11.cover.image.url }}" alt="{{ posts.11.cover.description }}">
+                    </div>
+                    <div class="card-stacked">
+                        <div class="card-content">
+                            <a href="{% url 'categoryarticles' slug=posts.11.category.slug %}" class="btn lato turqoise grey darken-4">{{ posts.11.category | upper }}</a>
+                            <a href="{% url 'read' slug=posts.11.slug %}" class="btn-floating right waves-effect waves-light bg-turqoise">
+                                <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
+                            </a>
+                            <p class="nunito" style="color: gray;">By
+                                <span class="grey-text text-darken-4">{{ posts.11.author.get_full_name | title }}</span>
+                                <i class="material-icons">arrow_forward_ios</i>
+                                {{ posts.11.created|naturalday:'F jS, Y'|title }}
+                            </p>
+                            <h1 class="zilla capitalize">{{ posts.11.title | title }}</h1>
+                            <p class="nunito justify_break">{{ posts.11.summary }}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-stacked">
-                    <div class="card-content">
-                        <a href="{% url 'categoryarticles' slug=posts.11.category.slug %}" class="btn lato turqoise grey darken-4">{{ posts.11.category | upper }}</a>
-                        <a href="{% url 'read' slug=posts.11.slug %}" class="btn-floating right waves-effect waves-light bg-turqoise">
+
+            </div>
+        {% endif %}
+
+    </div>
+
+
+    {% if posts.11 %}
+        <!-- ROW SWAP -->
+        <div class="row hide-on-large-only">
+
+            <div class="col m12 xl4 l4 s12 col-normal">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.11.cover.image.url }}" alt="{{ posts.11.cover.description }}">
+                        <a href="{% url 'categoryarticles' slug=posts.11.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.11.category | upper }}</a>
+                        <a href="{% url 'read' slug=posts.11.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
                             <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
                         </a>
+                    </div>
+                    <div class="card-content">
                         <p class="nunito" style="color: gray;">By
                             <span class="grey-text text-darken-4">{{ posts.11.author.get_full_name | title }}</span>
                             <i class="material-icons">arrow_forward_ios</i>
-                            {{ posts.11.created | date:"F j" }}<sup>{{ posts.11.created | date:"S" }}</sup>, {{ posts.11.created | date:"Y" }}
+                            {{ posts.11.created|naturalday:'F jS, Y'|title }}
                         </p>
                         <h1 class="zilla capitalize">{{ posts.11.title | title }}</h1>
-                        <p class="nunito">{{ posts.11.summary }}</p>
+                        <p class="nunito justify_break">{{ posts.11.summary }}</p>
+                        <a href="{% url 'read' slug=posts.11.slug %}" class="btn btn-large lato">READ MORE</a>
                     </div>
                 </div>
             </div>
 
         </div>
+        <!-- END OF ROW SWAP -->
+    {% endif %}
 
-    </div>
-
-    <!-- ROW SWAP -->
-    <div class="row hide-on-large-only">
-
-        <div class="col m12 xl4 l4 s12 col-normal">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.11.cover.image.url }}" alt="{{ posts.11.cover.description }}">
-                    <a href="{% url 'categoryarticles' slug=posts.11.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.11.category | upper }}</a>
-                    <a href="{% url 'read' slug=posts.11.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
-                        <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
-                    </a>
-                </div>
-                <div class="card-content">
-                    <p class="nunito" style="color: gray;">By
-                        <span class="grey-text text-darken-4">{{ posts.11.author.get_full_name | title }}</span>
-                        <i class="material-icons">arrow_forward_ios</i>
-                        {{ posts.11.created | date:"F j" }}<sup>{{ posts.11.created | date:"S" }}</sup>, {{ posts.11.created | date:"Y" }}
-                    </p>
-                    <h1 class="zilla capitalize">{{ posts.11.title | title }}</h1>
-                    <p class="nunito">{{ posts.11.summary }}</p>
-                    <a href="{% url 'read' slug=posts.11.slug %}" class="btn btn-large lato">READ MORE</a>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    <!-- END OF ROW SWAP -->
 
     <!-- ROW FIVE -->
     <div class="row">
 
-        <div class="col m12 xl4 l4 s12 col-normal">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.12.cover.image.url }}" alt="{{ posts.12.cover.description }}">
-                    <a href="{% url 'categoryarticles' slug=posts.12.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.12.category | upper }}</a>
-                    <a href="{% url 'read' slug=posts.12.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
-                        <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
-                    </a>
-                </div>
-                <div class="card-content">
-                    <p class="nunito" style="color: gray;">By
-                        <span class="grey-text text-darken-4">{{ posts.12.author.get_full_name | title }}</span>
-                        <i class="material-icons">arrow_forward_ios</i>
-                        {{ posts.12.created | date:"F j" }}<sup>{{ posts.12.created | date:"S" }}</sup>, {{ posts.12.created | date:"Y" }}
-                    </p>
-                    <h1 class="zilla capitalize">{{ posts.12.title | title }}</h1>
-                    <p class="nunito">{{ posts.12.summary }}</p>
-                    <a href="{% url 'read' slug=posts.12.slug %}" class="btn btn-large lato">READ MORE</a>
+        {% if posts.12 %}
+            <div class="col m12 xl4 l4 s12 col-normal">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.12.cover.image.url }}" alt="{{ posts.12.cover.description }}">
+                        <a href="{% url 'categoryarticles' slug=posts.12.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.12.category | upper }}</a>
+                        <a href="{% url 'read' slug=posts.12.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
+                            <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <p class="nunito" style="color: gray;">By
+                            <span class="grey-text text-darken-4">{{ posts.12.author.get_full_name | title }}</span>
+                            <i class="material-icons">arrow_forward_ios</i>
+                            {{ posts.12.created|naturalday:'F jS, Y'|title }}
+                        </p>
+                        <h1 class="zilla capitalize">{{ posts.12.title | title }}</h1>
+                        <p class="nunito justify_break">{{ posts.12.summary }}</p>
+                        <a href="{% url 'read' slug=posts.12.slug %}" class="btn btn-large lato">READ MORE</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
 
-        <div class="col m12 xl4 l4 s12 col-normal">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.13.cover.image.url }}" alt="{{ posts.13.cover.description }}">
-                    <a href="{% url 'categoryarticles' slug=posts.13.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.13.category | upper }}</a>
-                    <a href="{% url 'read' slug=posts.13.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
-                        <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
-                    </a>
-                </div>
-                <div class="card-content">
-                    <p class="nunito" style="color: gray;">By
-                        <span class="grey-text text-darken-4">{{ posts.13.author.get_full_name | title }}</span>
-                        <i class="material-icons">arrow_forward_ios</i>
-                        {{ posts.13.created | date:"F j" }}<sup>{{ posts.13.created | date:"S" }}</sup>, {{ posts.13.created | date:"Y" }}
-                    </p>
-                    <h1 class="zilla capitalize">{{ posts.13.title | title }}</h1>
-                    <p class="nunito">{{ posts.13.summary }}</p>
-                    <a href="{% url 'read' slug=posts.13.slug %}" class="btn btn-large lato">READ MORE</a>
-                </div>
-            </div>
-        </div>
 
-        <div class="col m12 xl4 l4 s12 col-normal">
-            <div class="card">
-                <div class="card-image">
-                    <img src="{{ posts.14.cover.image.url }}" alt="{{ posts.14.cover.description }}">
-                    <a href="{% url 'categoryarticles' slug=posts.14.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.14.category | upper }}</a>
-                    <a href="{% url 'read' slug=posts.14.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
-                        <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
-                    </a>
-                </div>
-                <div class="card-content">
-                    <p class="nunito" style="color: gray;">By
-                        <span class="grey-text text-darken-4">{{ posts.14.author.get_full_name | title }}</span>
-                        <i class="material-icons">arrow_forward_ios</i>
-                        {{ posts.14.created | date:"F j" }}<sup>{{ posts.14.created | date:"S" }}</sup>, {{ posts.14.created | date:"Y" }}
-                    </p>
-                    <h1 class="zilla capitalize">{{ posts.14.title | title }}</h1>
-                    <p class="nunito">{{ posts.14.summary }}</p>
-                    <a href="{% url 'read' slug=posts.14.slug %}" class="btn btn-large lato">READ MORE</a>
+        {% if posts.13 %}
+            <div class="col m12 xl4 l4 s12 col-normal">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.13.cover.image.url }}" alt="{{ posts.13.cover.description }}">
+                        <a href="{% url 'categoryarticles' slug=posts.13.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.13.category | upper }}</a>
+                        <a href="{% url 'read' slug=posts.13.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
+                            <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <p class="nunito" style="color: gray;">By
+                            <span class="grey-text text-darken-4">{{ posts.13.author.get_full_name | title }}</span>
+                            <i class="material-icons">arrow_forward_ios</i>
+                            {{ posts.13.created|naturalday:'F jS, Y'|title }}
+                        </p>
+                        <h1 class="zilla capitalize">{{ posts.13.title | title }}</h1>
+                        <p class="nunito justify_break">{{ posts.13.summary }}</p>
+                        <a href="{% url 'read' slug=posts.13.slug %}" class="btn btn-large lato">READ MORE</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
+
+
+        {% if posts.14 %}
+            <div class="col m12 xl4 l4 s12 col-normal">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="{{ posts.14.cover.image.url }}" alt="{{ posts.14.cover.description }}">
+                        <a href="{% url 'categoryarticles' slug=posts.14.category.slug %}" class="btn btn-large card-title lato turqoise grey darken-4">{{ posts.14.category | upper }}</a>
+                        <a href="{% url 'read' slug=posts.14.slug %}" class="btn-floating halfway-fab waves-effect waves-light bg-turqoise">
+                            <i class="material-icons grey-text text-darken-4">remove_red_eye</i>
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <p class="nunito" style="color: gray;">By
+                            <span class="grey-text text-darken-4">{{ posts.14.author.get_full_name | title }}</span>
+                            <i class="material-icons">arrow_forward_ios</i>
+                            {{ posts.14.created|naturalday:'F jS, Y'|title }}
+                        </p>
+                        <h1 class="zilla capitalize">{{ posts.14.title | title }}</h1>
+                        <p class="nunito justify_break">{{ posts.14.summary }}</p>
+                        <a href="{% url 'read' slug=posts.14.slug %}" class="btn btn-large lato">READ MORE</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
 
     </div>
     <!-- END OF ROW FIVE -->
@@ -505,10 +535,10 @@
                         <p class="nunito" style="color: gray;">By
                             <span class="grey-text text-darken-4">{{ p.author.get_full_name }}</span>
                             <i class="material-icons">arrow_forward_ios</i>
-                            {{ p.created | date:"F j" }}<sup>{{ p.created | date:"S" }}</sup>, {{ p.created | date:"Y" }}
+                            {{ p.created|naturalday:'F jS, Y'|title }}
                         </p>
                         <h1 class="zilla capitalize">{{ p.title | title }}</h1>
-                        <p class="nunito">{{ p.summary }}</p>
+                        <p class="nunito justify_break">{{ p.summary }}</p>
                         <a href="{% url 'read' slug=p.slug %}" class="btn btn-large lato">READ MORE</a>
                     </div>
                 </div>
@@ -533,7 +563,7 @@
             </div>
         </div>
     </div>
-    
+
     {% if more.has_next %}
         <div class="load-more center-align">
             <a href="?page={{ more.next_page_number }}" class="lato btn btn-large infinite-more-link">More</a>

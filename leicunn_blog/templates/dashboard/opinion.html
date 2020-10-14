@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+<title>{{ pagename }} | Leicunn Studio Blog</title>
+{% endblock title %}
+
+{% block brand %}
+<a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="{% url 'posts' %}">{{ pagename }}</a>
+{% endblock brand %}
+
+{% block customcss %}
+<link href="{% static 'css/opinion.css' %}" rel="stylesheet" />
+{% endblock customcss %}
+
+{% block customjs %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="{% static 'js/opinion.js' %}"></script>
+{% endblock customjs %}
+
+
+{% block header %}
+<div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row">
+                <div class="col-lg-7 col-md-10">
+                    <h1 class="display-2 text-white">{{ sectionname }}</h1>
+                    <p class="text-white mt-0 mb-5">View & manage opinions and messages by deleting or changing their display status.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock header %}
+
+{% block mainContent %}
+<div class="row mt-5">
+
+    <div class="col-xl-12 mb-5 mb-xl-0">
+        <div class="card shadow">
+            <div class="card-header border-0">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0">All Comments</h3>
+                    </div>
+                    <div class="col text-right">
+                        <a href="#!" id="edit" class="btn btn-sm btn-info">Edit</a>
+                        <a href="#!" id="reply" class="btn btn-sm btn-primary">Reply</a>
+                        <a href="#!" id="delete" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-items-center table-flush">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>
+                                <div class="mb-3"></div>
+                            </th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Comment</th>
+                            <th scope="col" class="text-center">Replies</th>
+                            <th scope="col">Post</th>
+                            <th scope="col">E-Mail & Website</th>
+                            <th scope="col">Date & Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% csrf_token %}
+                        {% for o in opinions %}
+                        <tr id="comment{{ o.id }}">
+                            <td>
+                                <div class="custom-control custom-radio mb-3">
+                                    <input name="rowcomment" class="custom-control-input" value="{{ o.id }}" id="comment-{{ o.id }}" type="radio">
+                                    <label class="custom-control-label" for="comment-{{ o.id }}"></label>
+                                </div>
+                            </td>
+                            <td class="text-capitalize"  id="commenter{{ o.id }}">
+                                {% if o.is_author == 'Yes' %}
+                                    <strong class="text-indigo">{{ o.name }}</strong>
+                                {% else %}
+                                    {{ o.name }}
+                                {% endif %}
+                            </td>
+                            <td class="comment">
+                                <strong>{{ o.content }}</strong>
+                            </td>
+                            <td class="text-center">
+                                {% if o.parent %}
+                                    <i class="fas fa-retweet text-purple"></i>
+                                {% else %}
+                                    <i class="fas fa-comment-alt text-gray"></i>
+                                {% endif %}
+                            </td>
+                            <td class="post">
+                                <a class="" target="_blank" href="{% url 'author' slug=o.post.slug %}#comments">
+                                    Know {{ o.post.get_full_name | title }}
+                                </a>
+                            </td>
+                            <td class="text-break mail">
+                                <a href="mailto:{{ o.email }}" class="text-primary" target="_blank">{{ o.email }}</a>
+                                {% if o.website %}
+                                    <br/><a href="{{ o.website }}" target="_blank" class="text-primary">{{ o.website }}</a>
+                                {% endif %}
+                            </td>
+                            <td class="text-capitalize">
+                                {{ o.created | date:"D d M Y" }}<br/> <strong>|</strong> {{ o.status }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Reply Modal -->
+<div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <form action="" method="POST">
+                <div class="modal-header">
+                    <h4 class="modal-title text-capitalize" id="replyModalTitle"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body pl-5 pr-5 pt-3 pb-3 bg-secondary">
+
+                    <div class="row">
+
+                        {% csrf_token %}
+                        {% for hidden_field in form.hidden_fields %}
+                            {{ hidden_field }}
+                        {% endfor %}
+
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <span class="alert-inner--icon"><i class="fas fa-exclamation-circle"></i></span>
+                            <span class="alert-inner--text"><strong>Error!</strong> {{ form.non_field_errors.as_text }}</span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endif %}
+
+                        {% if form.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <span class="alert-inner--icon"><i class="fas fa-exclamation-circle"></i></span>
+                            <span class="alert-inner--text"><strong>Error!</strong> {{ form.errors.as_text }}</span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endif %}
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <div class="alert alert-primary fade show displaycomment" role="alert" style="display: none;">
+                                    <span class="alert-inner--text">
+                                        <strong>@
+                                            <span id="name" class="text-capitalize"></span>
+                                        </strong><br/><br/>
+                                        Comment: <strong id="content"></strong>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.content.id_for_label }}">Comment</label>
+                                <textarea rows="4" id="{{ form.content.id_for_label }}" class="form-control form-control-alternative" name="{{ form.content.name }}" maxlength="{{ form.content.field.max_length }}"
+                                placeholder="{{ form.content.help_text }}" required>{{ form.content.value | default_if_none:'' }}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.status.id_for_label }}">Status</label>
+                                <select name="{{ form.status.name }}" class="form-control form-control-alternative text-capitalize" id="{{ form.status.id_for_label }}">
+                                    {% for choice in form.status.field.choices %}
+                                        <option class="text-capitalize" value="{{ choice.0 }}"
+                                            {% ifequal form.status.value choice.0 %}
+                                                selected="selected"
+                                            {% endifequal %}
+                                        >{{ choice.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" name="submit" type="submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- End of Reply Modal -->
+
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <form action="" method="POST">
+                <div class="modal-header">
+                    <h4 class="modal-title text-capitalize" id="editModalTitle"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body pl-5 pr-5 pt-3 pb-3 bg-secondary">
+
+                    <div class="row">
+
+                        {% csrf_token %}
+                        {% for hidden_field in form.hidden_fields %}
+                            {{ hidden_field }}
+                        {% endfor %}
+
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <span class="alert-inner--icon"><i class="fas fa-exclamation-circle"></i></span>
+                            <span class="alert-inner--text"><strong>Error!</strong> {{ form.non_field_errors.as_text }}</span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endif %}
+
+                        {% if form.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <span class="alert-inner--icon"><i class="fas fa-exclamation-circle"></i></span>
+                            <span class="alert-inner--text"><strong>Error!</strong> {{ form.errors.as_text }}</span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endif %}
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <div class="alert alert-primary fade show displaycomment" role="alert" style="display: none;">
+                                    <span class="alert-inner--text">
+                                        Post: <strong id="title"></strong>
+                                        <div id="thereply" style="display: none;"><br/>
+                                            <span>In Reply To
+                                                <strong id="name" class="text-capitalize"></strong>
+                                            </span><br/>
+                                            <strong id="content"></strong>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.content.id_for_label }}">Comment</label>
+                                <textarea rows="4" id="{{ form.content.id_for_label }}" class="form-control form-control-alternative" name="{{ form.content.name }}" maxlength="{{ form.content.field.max_length }}"
+                                placeholder="{{ form.content.help_text }}" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.name.id_for_label }}">Name</label>
+                                <input type="text" id="{{ form.name.id_for_label }}" name="{{ form.name.name }}" maxlength="{{ form.name.field.max_length }}" class="text-capitalize form-control form-control-alternative" placeholder="{{ form.name.help_text }}" value="{{ form.name.value | default_if_none:'' }}" required >
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.email.id_for_label }}">E-Mail Address</label>
+                                <input type="email" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" maxlength="{{ form.email.field.max_length }}" class="form-control form-control-alternative" placeholder="{{ form.email.help_text }}" value="{{ form.email.value | default_if_none:'' }}" required >
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.website.id_for_label }}">Website</label>
+                                <input type="url" id="{{ form.website.id_for_label }}" name="{{ form.website.name }}" maxlength="{{ form.website.field.max_length }}" class="form-control form-control-alternative" placeholder="{{ form.website.help_text }}" value="{{ form.website.value | default_if_none:'' }}">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.status.id_for_label }}">Status</label>
+                                <select name="{{ form.status.name }}" class="form-control form-control-alternative text-capitalize" id="{{ form.status.id_for_label }}">
+                                    {% for choice in form.status.field.choices %}
+                                        <option class="text-capitalize" value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12" style="display: none;">
+                            <div class="form-group">
+                                {{ form.image }}
+                                {{ form.author }}
+                                {{ form.post }}
+                                {{ form.parent }}
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" name="submit" type="submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- End of Edit Modal -->
+{% endblock mainContent %}

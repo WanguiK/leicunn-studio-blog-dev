@@ -1,0 +1,61 @@
+.container-fluid.mt--7 .row .col-xl-4 .card {
+    padding-bottom: 10px;
+}
+
+.container-fluid.mt--7 .row:first-child .card {
+    height: 517px;
+    max-height: 517px;
+}
+
+.container-fluid.mt--7 .card .table-responsive {
+    overflow-x: hidden;
+}
+
+.card.bg-default table thead td:first-child,
+.card.bg-default table tbody td:first-child,
+.card.bg-default table thead th:first-child,
+.card.bg-default table tbody th:first-child {
+    padding-right: 1rem !important;
+    /* white-space: nowrap !important; */
+    white-space: normal;
+}
+
+.card.bg-default table thead td:last-child,
+.card.bg-default table thead th:last-child,
+.card.bg-default table tbody th:last-child,
+.card.bg-default table tbody td:last-child {
+    padding-left: 0;
+    padding-right: 1rem !important;
+    white-space: normal;
+    /* max-width: 10px; */
+}
+
+.card.bg-default tr th .media .badge-dot i,
+.card.bg-default tr td .media .badge-dot i {
+    width: 13px;
+    height: 13px;
+}
+
+.card.bg-default tr th .media .media-body span.name,
+.card.bg-default tr td .media .media-body span.name {
+    line-height: 2.5;
+}
+
+.card.bg-default tr td .media .media-body span {
+    /* color: rgba(237, 237, 237, 0.55) !important; */
+    color: #adb5bd;
+}
+
+.card.bg-default tr th .media .media-body span.notif-content {
+    font-weight: normal !important;
+}
+
+.dropdown-menu .dropdown-item:hover,
+.dropdown-menu .dropdown-item:active {
+    background-color: white !important;
+    color: #007bff !important;
+}
+
+.dropdown-menu {
+    min-width: auto;
+}

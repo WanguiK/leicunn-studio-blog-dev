@@ -6,9 +6,25 @@ from blog.models import *
 
 class AuthorCreationForm(UserCreationForm):
 
+    first_name = forms.CharField(max_length=20, help_text="Jane")
+
+    last_name = forms.CharField(max_length=20, help_text="Doe")
+
+    email = forms.EmailField(max_length=100, help_text="janedoe@example.com")
+
+    position = forms.CharField(max_length=50, help_text="i.e. Editor")
+
+    location = forms.CharField(max_length=50, help_text="City, Country")
+
+    image = forms.ModelChoiceField(queryset=Media.objects.order_by('-created').filter(type="Profile", profilepic=None), empty_label=None)
+
+    cover = forms.ModelChoiceField(queryset=Media.objects.order_by('-created').filter(type="Author Cover", authorcover=None), empty_label=None)
+
+    website = forms.URLField(max_length=100, help_text="http://www.example.com")
+
     class Meta(UserCreationForm):
         model = Author
-        fields = ('username', 'email', 'position', 'location', 'image', 'website', 'twitter', 'instagram', 'linkedin', 'description',)
+        fields = ('first_name', 'last_name', 'email', 'position', 'location', 'image', 'website', 'cover', 'password1', 'password2')
 
 
 class AuthorChangeForm(UserChangeForm):
@@ -23,7 +39,9 @@ class AuthorChangeForm(UserChangeForm):
 
     location = forms.CharField(max_length=50, help_text="City, Country")
 
-    image = forms.ModelChoiceField(queryset=Media.objects.order_by('-created').filter(post=None, type="Profile"), empty_label=None)
+    image = forms.ModelChoiceField(queryset=Media.objects.order_by('-created').filter(type="Profile", profilepic=None), empty_label=None)
+
+    cover = forms.ModelChoiceField(queryset=Media.objects.order_by('-created').filter(type="Author Cover", authorcover=None), empty_label=None)
 
     website = forms.URLField(max_length=100, help_text="http://www.example.com")
 
@@ -34,7 +52,7 @@ class AuthorChangeForm(UserChangeForm):
     linkedin = forms.URLField(max_length=100, help_text="https://www.linkedin.com")
 
     description = forms.CharField(max_length=280, help_text="A tweet-sized summary about you ...")
-    
+
     article = forms.CharField(help_text="An article about you, your skillset and achievement etc.")
 
     class Meta:
@@ -45,13 +63,12 @@ class AuthorChangeForm(UserChangeForm):
 class CategoryForm(ModelForm):
     class Meta:
         model = Category
-        fields = ['category', 'description', 'slug']
+        fields = ['category', 'description', 'slug', 'show']
 
 
 class MediaForm(ModelForm):
 
     image = forms.FileField()
-    
     class Meta:
         model = Media
         fields = ['description', 'slug', 'type', 'image']
@@ -67,6 +84,10 @@ class PostForm(ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'summary', 'article', 'tags', 'status', 'category', 'cover', 'slug']
+
+    def clean_title(self):
+        return self.cleaned_data['title'].title()
+
 
 class EditForm(ModelForm):
     status = forms.ChoiceField(choices=Post.POST_STATUS, widget=forms.RadioSelect())
@@ -90,15 +111,16 @@ class CommentForm(ModelForm):
     class Meta:
         model = Comment
         fields = '__all__'
-        # fields = ['content', 'name', 'email', 'website', 'parent']
 
-    # def __init__(self, *args, **kwargs):
-    #     super(CommentForm, self).__init__(*args, **kwargs)
-    #     self.fields['parent'].queryset = Comment.objects.filter(status="Show", replies=None)
+    def clean_content(self):
+        return self.cleaned_data['content']
 
 
 class OpinionForm(ModelForm):
 
     class Meta:
-        model = Opinions
+        model = Opinion
         fields = '__all__'
+
+    def clean_content(self):
+        return self.cleaned_data['content']

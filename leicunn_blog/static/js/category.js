@@ -10,9 +10,9 @@ $(document).ready(function () {
     $("#id_category").keyup(function(){
         var Text = $(this).val();
         Text = convertToSlug(Text);
-        $("#id_slug").val(Text);    
+        $("#id_slug").val(Text);
     });
-    
+
     var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
 
     function csrfSafeMethod(method) {
@@ -46,7 +46,9 @@ $(document).ready(function () {
                 swal({
                     title: "Yeey!",
                     text: "Your category is safe.",
-                    icon: "info"
+                    icon: "info",
+                    buttons: false,
+                    timer: 3500
                 });
             }
         });
@@ -62,14 +64,18 @@ $(document).ready(function () {
                 swal({
                     title: "Success!",
                     text: "The blog post has been deleted.",
-                    icon: "success"
+                    icon: "success",
+                    buttons: false,
+                    timer: 3500
                 });
             },
             error : function(xhr,errmsg,err) {
                 swal({
                     title: "Error!",
                     text: "An error has occurred. The category has not been deleted.",
-                    icon: "error"
+                    icon: "error",
+                    buttons: false,
+                    timer: 3500
                 });
                 console.log(xhr.status + ": " + xhr.responseText);
             }

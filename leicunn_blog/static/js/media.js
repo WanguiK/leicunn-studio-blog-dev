@@ -9,7 +9,7 @@ $(document).ready(function () {
            reader.readAsDataURL(input.files[0]);
         }
     }
-     
+
     $("#id_image").change(function() {
         display(this);
     });
@@ -24,7 +24,7 @@ $(document).ready(function () {
     $("#id_description").keyup(function(){
         var Text = $(this).val();
         Text = convertToSlug(Text);
-        $("#id_slug").val(Text);    
+        $("#id_slug").val(Text);
     });
 
     var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
@@ -49,16 +49,18 @@ $(document).ready(function () {
             swal({
                 title: "Error!",
                 text: "You have not selected an image to edit.",
-                icon: "error"
+                icon: "error",
+                buttons: false,
+                timer: 3500
             });
         }
-        
+
     });
 
     $("#delete").click(function() {
 
         if($("input[type='radio']").is(':checked')) {
-            
+
             var pk = $("input[type='radio']:checked").val();
             var mediaId = "#media"+pk+" .card .card-body label";
             var media = $(mediaId).text();
@@ -78,7 +80,9 @@ $(document).ready(function () {
                     swal({
                         title: "Yeey!",
                         text: "Your media item is safe.",
-                        icon: "info"
+                        icon: "info",
+                        buttons: false,
+                        timer: 3500
                     });
                 }
             });
@@ -87,7 +91,9 @@ $(document).ready(function () {
             swal({
                 title: "Error!",
                 text: "You have not selected an image to delete.",
-                icon: "error"
+                icon: "error",
+                buttons: false,
+                timer: 3500
             });
         }
     });
@@ -101,7 +107,9 @@ $(document).ready(function () {
                 swal({
                     title: "Success!",
                     text: "The blog post has been deleted.",
-                    icon: "success"
+                    icon: "success",
+                    buttons: false,
+                    timer: 3500
                 });
             },
 
@@ -109,7 +117,9 @@ $(document).ready(function () {
                 swal({
                     title: "Error!",
                     text: "An error has occurred. The blog post has not been deleted.",
-                    icon: "error"
+                    icon: "error",
+                    buttons: false,
+                    timer: 3500
                 });
                 console.log(xhr.status + ": " + xhr.responseText);
             }

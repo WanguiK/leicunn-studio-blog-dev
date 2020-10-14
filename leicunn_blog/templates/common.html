@@ -26,6 +26,7 @@
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
     <!--   Optional JS   -->
+    {% block optionaljs %} {% endblock optionaljs %}
     <!--   Argon JS   -->
     <script src="{% static 'js/argon-dashboard.min.js' %}"></script>
     {% block customjs %} {% endblock customjs %}

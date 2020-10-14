@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load humanize %}
 
 {% block title %}
 <title>{{ pagename }} | Leicunn Studio Blog</title>
@@ -9,6 +10,20 @@
 {% block brand %}
 <p class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block">{{ pagename }}</p>
 {% endblock brand %}
+
+{% block customcss %}
+<link href="{% static 'css/dashboard.css' %}" rel="stylesheet" />
+{% endblock customcss %}
+
+{% block optionaljs %}
+<script src="{% static 'js/Chart.min.js' %}"></script>
+<script src="{% static 'js/Chart.extension.js' %}"></script>
+{% endblock optionaljs %}
+
+{% block customjs %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock customjs %}
 
 {% block header %}
 <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
@@ -105,3 +120,332 @@
     </div>
 </div>
 {% endblock header %}
+
+{% block mainContent %}
+<div class="container-fluid mt--7">
+    <div class="row">
+        <div class="col-xl-8 mb-5 mb-xl-0">
+            <div class="card bg-gradient-default shadow">
+                <div class="card-header bg-transparent">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-uppercase text-light ls-1 mb-1">Overview</h6>
+                            <h2 class="text-white mb-0">Sales value</h2>
+                        </div>
+                        <div class="col">
+                            <ul class="nav nav-pills justify-content-end">
+                                <li class="nav-item mr-2 mr-md-0" data-toggle="chart" data-target="#chart-sales"
+                                    data-update='{"data":{"datasets":[{"data":[0, 20, 10, 30, 15, 40, 20, 60, 60]}]}}'
+                                    data-prefix="$" data-suffix="k">
+                                    <a href="#" class="nav-link py-2 px-3 active" data-toggle="tab">
+                                        <span class="d-none d-md-block">Month</span>
+                                        <span class="d-md-none">M</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item" data-toggle="chart" data-target="#chart-sales"
+                                    data-update='{"data":{"datasets":[{"data":[0, 20, 5, 25, 10, 30, 15, 40, 40]}]}}'
+                                    data-prefix="$" data-suffix="k">
+                                    <a href="#" class="nav-link py-2 px-3" data-toggle="tab">
+                                        <span class="d-none d-md-block">Week</span>
+                                        <span class="d-md-none">W</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Chart -->
+                    <div class="chart">
+                        <!-- Chart wrapper -->
+                        <canvas id="chart-sales" class="chart-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="card bg-default shadow">
+                <div class="card-header bg-transparent border-0">
+                    <h3 class="text-white mb-0">Notifications</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-items-center table-dark table-flush" id="notifications">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col" colspan="2" class="sort pl-3">
+                                    <strong>
+                                        {% if new > 1 %}
+                                            You have <span style="color: #17a2b8;">{{ new }}</span> new notifications
+                                        {% elif new == 0 %}
+                                            You have no new notifications
+                                        {% else %}
+                                            You have <span style="color: #17a2b8;">{{ new }}</span> new notification
+                                        {% endif %}
+                                    </strong>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="list">
+                            {% csrf_token %}
+                            {% for n in notifications %}
+
+                                {% if n.seen == '0' %}
+                                <tr class="notif{{ n.id }}">
+                                    <th scope="row" style="word-wrap:break-word !important;">
+                                        <div class="media align-items-center">
+                                            <span class="badge badge-dot mr-3">
+                                                <i class="bg-success"></i>
+                                            </span>
+                                            <div class="media-body">
+                                                <span class="name mb-0 text-sm">
+                                                    {{ n.title }}<span class="float-right text">{{ n.created | naturaltime }}</span>
+                                                </span><br/>
+                                                <span class="mb-0 text-sm notif-content">{{ n.message|truncatechars:52 }}</span>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <td class="text-right">
+                                        <div class="dropdown">
+                                            <a class="btn btn-sm btn-icon-only text-light mr-0" href="#" role="button"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow bg-primary shadow">
+
+                                                <a class="text-white dropdown-item view" href="{{ n.link }}">
+                                                    <span class="d-none">{{ n.seen }}</span>View
+                                                </a>
+                                                <a class="text-white dropdown-item status" href="#">
+                                                    <span class="d-none">{{ n.seen }}</span>Mark as read
+                                                </a>
+                                                <a class="text-white dropdown-item delete" href="#">
+                                                    <span class="d-none">{{ n.id }}</span>Delete
+                                                </a>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr class="notif{{ n.id }}">
+                                    <td scope="row">
+                                        <div class="media align-items-center">
+                                            <span class="badge badge-dot mr-3">
+                                                <i class="bg-translucent-light"></i>
+                                            </span>
+                                            <div class="media-body">
+                                                <span class="name mb-0 text-sm">
+                                                    {{ n.title }}<span class="float-right">{{ n.created|naturalday:'M jS, Y' }}</span>
+                                                </span><br/>
+                                                <span class="mb-0 text-sm notif-content">{{ n.message|truncatechars:52 }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">
+                                        <div class="dropdown">
+                                            <a class="btn btn-sm btn-icon-only text-light mr-0" href="#" role="button"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow bg-primary shadow">
+                                                <a class="text-white dropdown-item view" href="{{ n.link }}">
+                                                    <span class="d-none">{{ n.seen }}</span>View
+                                                </a>
+                                                <a class="text-white dropdown-item status" href="#">
+                                                    <span class="d-none">{{ n.seen }}</span>Mark as unread
+                                                </a>
+                                                <a class="text-white dropdown-item delete" href="#">
+                                                    <span class="d-none">{{ n.id }}</span>Delete
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endif %}
+
+                            {% endfor %}
+
+                            <!-- <tr>
+                                <th scope="row" style="word-wrap:break-word !important;">
+                                    <div class="media align-items-center">
+                                        <span class="badge badge-dot mr-3">
+                                            <i class="bg-success"></i>
+                                        </span>
+                                        <div class="media-body">
+                                            <span class="name mb-0 text-sm">
+                                                Argon Design System<span class="float-right bold">3 hrs ago</span>
+                                            </span><br/>
+                                            <span class="mb-0 text-sm notif-content">Collaboratively administrate empowered markets via plug-and-play networks. Dynamically procrastinate B2C users after installed base benefits.</span>
+                                        </div>
+                                    </div>
+                                </th>
+                                <td class="text-right">
+                                    <div class="dropdown">
+                                        <a class="btn btn-sm btn-icon-only text-light mr-0" href="#" role="button"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow bg-primary shadow">
+                                            <a class="text-white dropdown-item" href="#">View</a>
+                                            <a class="text-white dropdown-item" href="#">Mark as read</a>
+                                            <a class="text-white dropdown-item" href="#">Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr> -->
+                            <!-- <tr>
+                                <td scope="row">
+                                    <div class="media align-items-center">
+                                        <span class="badge badge-dot mr-3">
+                                            <i class="bg-translucent-light"></i>
+                                        </span>
+                                        <div class="media-body">
+                                            <span class="name mb-0 text-sm">
+                                                React Material Dashboard
+                                                <span class="float-right">5 hrs ago</span>
+                                            </span><br/>
+                                            <span class="mb-0 text-sm notif-content">Dynamically procrastinate B2C users after installed base benefits.</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-right">
+                                    <div class="dropdown">
+                                        <a class="btn btn-sm btn-icon-only text-light mr-0" href="#" role="button"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow bg-primary shadow">
+                                            <a class="text-white dropdown-item" href="#">View</a>
+                                            <a class="text-white dropdown-item" href="#">Mark as unread</a>
+                                            <a class="text-white dropdown-item" href="#">Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-xl-8 mb-5 mb-xl-0">
+            <div class="card shadow">
+                <div class="card-header border-0">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="mb-0">Page visits</h3>
+                        </div>
+                        <div class="col text-right">
+                            <a href="#!" class="btn btn-sm btn-primary">See all</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <!-- Projects table -->
+                    <table class="table align-items-center table-flush">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Page name</th>
+                                <th scope="col">Visitors</th>
+                                <th scope="col">Unique users</th>
+                                <th scope="col">Bounce rate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">
+                                    /argon/
+                                </th>
+                                <td>
+                                    4,569
+                                </td>
+                                <td>
+                                    340
+                                </td>
+                                <td>
+                                    <i class="fas fa-arrow-up text-success mr-3"></i> 46,53%
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    /argon/index.html
+                                </th>
+                                <td>
+                                    3,985
+                                </td>
+                                <td>
+                                    319
+                                </td>
+                                <td>
+                                    <i class="fas fa-arrow-down text-warning mr-3"></i> 46,53%
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    /argon/charts.html
+                                </th>
+                                <td>
+                                    3,513
+                                </td>
+                                <td>
+                                    294
+                                </td>
+                                <td>
+                                    <i class="fas fa-arrow-down text-warning mr-3"></i> 36,49%
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    /argon/tables.html
+                                </th>
+                                <td>
+                                    2,050
+                                </td>
+                                <td>
+                                    147
+                                </td>
+                                <td>
+                                    <i class="fas fa-arrow-up text-success mr-3"></i> 50,87%
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">
+                                    /argon/profile.html
+                                </th>
+                                <td>
+                                    1,795
+                                </td>
+                                <td>
+                                    190
+                                </td>
+                                <td>
+                                    <i class="fas fa-arrow-down text-danger mr-3"></i> 46,53%
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="card shadow">
+                <div class="card-header bg-transparent">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
+                            <h2 class="mb-0">Total orders</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Chart -->
+                    <div class="chart">
+                        <canvas id="chart-orders" class="chart-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock mainContent %}

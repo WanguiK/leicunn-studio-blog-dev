@@ -1,0 +1,46 @@
+.table-responsive {
+    max-height: 820px !important;
+    overflow: scroll;
+    padding: 1em;
+}
+
+@keyframes highlight {
+    0% {
+        background: #e9ecef;
+    }
+    100% {
+        background: none;
+    }
+}
+
+.card .table tbody tr[id^="comment"]:target {
+    animation: highlight 5s;
+    transition: animation 0.15s ease;
+}
+
+.card .table td,
+.card .table th {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.card .table td.comment {
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    width: 650px !important;
+}
+
+.card .table td.post {
+    width: 220px !important;
+}
+
+.card .table td.post a {
+    white-space: normal;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+}
+
+form .alert.displaycomment {
+    padding: .4em .8em;
+}

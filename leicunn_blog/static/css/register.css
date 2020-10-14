@@ -1,0 +1,59 @@
+.table-responsive {
+    height: 500px !important;
+    overflow: scroll;
+    padding: 1em;
+}
+
+table tr .owner {
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+table tr .owner1 {
+    width: 20% !important;
+}
+
+table tr td a {
+    font-size: 20px;
+}
+
+/* 
+table tr td.desc {
+    width: 45% !important;
+    white-space: normal;
+    word-wrap: break-word;
+} */
+
+.card .table td,
+.card .table th {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.modal-lg {
+    max-width: 1000px;
+}
+
+.modal-body {
+    margin-right: 1px;
+    max-height: 700px;
+    overflow-y: scroll !important;
+}
+
+.col-md-4.pb-3 .card img {
+    height: 200px !important;
+    width: 100%;
+}
+
+.pb-3 .card {
+    border: none;
+    box-shadow: 0 1px 3px rgba(50, 50, 93, 0.15), 0 1px 0 rgba(0, 0, 0, 0.02);
+}
+
+label.card-title {
+    font-size: 0.8125rem;
+    font-family: inherit;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #32325d;
+}

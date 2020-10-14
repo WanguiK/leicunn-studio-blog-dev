@@ -52,7 +52,9 @@ $(document).ready(function(){
                 swal({
                     title: "Success!",
                     text: "The comment has been added and will be displayed once approved.",
-                    icon: "success"
+                    icon: "success",
+                    buttons: false,
+                    timer: 3500
                 });
                 $('#id_content').val('');
                 $('#id_name').val('');

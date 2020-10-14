@@ -52,7 +52,9 @@ $(document).ready(function(){
                 swal({
                     title: "Success!",
                     text: "The comment has been added and will be displayed once approved.",
-                    icon: "success"
+                    icon: "success",
+                    buttons: false,
+                    timer: 3000
                 });
                 $('#id_content').val('');
                 $('#id_name').val('');
@@ -65,7 +67,9 @@ $(document).ready(function(){
                 swal({
                     title: "Error!",
                     text: "An error has occurred. The comment has not been added.",
-                    icon: "error"
+                    icon: "error",
+                    buttons: false,
+                    timer: 3000
                 });
                 console.log(xhr.status + ": " + xhr.responseText);
             }

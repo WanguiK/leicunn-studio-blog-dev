@@ -1,0 +1,82 @@
+html, body {
+    height: 100%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.container-fluid {
+    background-image: url('../images/500.jpg');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 20px;
+    min-width: 70vw;
+    min-height: 70vh;
+    background-color: #ffffff;
+    box-shadow:  20px 20px 50px #d9d9d9, -20px -20px 50px #ffffff;
+}
+
+
+/*MEDIA QUERIES*/
+/* Larger than normal laptop sizes */
+/* @media only screen and (min-width: 1601px){ */
+@media only screen and (max-width: 1850px) and (min-width: 1601px){
+
+}
+
+@media only screen and (max-width: 1600px) and (min-width: 1201px){
+
+}
+
+@media only screen and (max-width: 1200px) and (min-width: 993px){
+
+}
+
+/* COL M stops here */
+@media only screen and (min-width: 959px) and (max-width: 992px) {
+
+}
+
+/* All Mobile Sizes (devices and browser) */
+@media only screen and (min-width: 768px) and (max-width: 958px) {
+
+    .container-fluid {
+        min-width: 95vw;
+        min-height: 95vh;
+    }
+
+}
+
+/* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+
+    .container-fluid {
+        min-width: 95vw;
+        min-height: 95vh;
+    }
+
+}
+
+/* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
+@media only screen and (min-width: 320px) and (max-width: 479px) {
+
+    .container-fluid {
+        border-radius: 0;
+        min-width: 100vw;
+        min-height: 100vh;
+    }
+
+}
+
+/* Mobile Portrait Size iphone 5 */
+@media only screen and (max-width: 319px) {
+
+    .container-fluid {
+        border-radius: 0;
+        min-width: 100vw;
+        min-height: 100vh;
+    }
+
+}
+/*END OF MEDIA QUERIES*/

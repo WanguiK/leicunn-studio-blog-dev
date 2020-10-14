@@ -14,6 +14,48 @@ $(document).ready(function () {
         }
     });
 
+    $("#reply").click(function() {
+        if($("input[type='radio']").is(':checked')) {
+            var pk = $("input[type='radio']:checked").val();
+            display_comment(pk);
+        } else {
+            swal({
+                title: "Error!",
+                text: "You have not selected a comment to reply to.",
+                icon: "error",
+                buttons: false,
+                timer: 3500
+            });
+        }
+
+    });
+
+    function display_comment(pk){
+        $.ajax({
+            url : "/getcomment/"+pk+"/",
+            type: 'GET',
+            dataType: 'json',
+            success : function(json) {
+                console.log(json.data);
+                $('#content').text(json.data[0].content);
+                $('#name').text(json.data[0].name);
+                $('#replyModalTitle').text("Reply To @" + json.data[0].name);
+                $('#replyModal form .displaycomment').show();
+                $('#replyModal').modal('show');
+            },
+            error : function(xhr, errmsg, err) {
+                swal({
+                    title: "Error!",
+                    text: "An error has occurred. The comment has not been retrieved.",
+                    icon: "error",
+                    buttons: false,
+                    timer: 3500
+                });
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    };
+
     $("#delete").click(function() {
         var pk = $("input[type='radio']:checked").val();
         var titleid = "#commenter"+pk;
@@ -23,7 +65,9 @@ $(document).ready(function () {
             swal({
                 title: "Error!",
                 text: "You have to select a comment to delete.",
-                icon: "error"
+                icon: "error",
+                buttons: false,
+                timer: 3500
             });
         } else {
             swal({
@@ -40,7 +84,9 @@ $(document).ready(function () {
                     swal({
                         title: "Yeey!",
                         text: "Your comment is safe.",
-                        icon: "info"
+                        icon: "info",
+                        buttons: false,
+                        timer: 3500
                     });
                 }
             });
@@ -57,124 +103,163 @@ $(document).ready(function () {
                 swal({
                     title: "Success!",
                     text: "The comment has been deleted.",
-                    icon: "success"
+                    icon: "success",
+                    buttons: false,
+                    timer: 3500
                 });
             },
             error : function(xhr,errmsg,err) {
                 swal({
                     title: "Error!",
                     text: "An error has occurred. The comment has not been deleted.",
-                    icon: "error"
+                    icon: "error",
+                    buttons: false,
+                    timer: 3500
                 });
                 console.log(xhr.status + ": " + xhr.responseText);
             }
         });
     };
 
+    $('#replyModal form').submit(function(e){
+        e.preventDefault();
+        var pk = $("input[type='radio']:checked").val();
+        $.ajax({
+            url: '/reply/' + pk + '/',
+            type: 'POST',
+            data: $(this).serialize(),
+            success : function(json) {
+                swal({
+                    title: "Success!",
+                    text: "The reply has been posted.",
+                    icon: "success",
+                    buttons: false,
+                    timer: 3500
+                });
+                $('#replyModal #id_content').val('');
+                $('#replyModal #id_status')[0].selectedIndex = 0;
+                $('#replyModal').modal('hide');
+            },
+            error : function(xhr, errmsg, err) {
+                swal({
+                    title: "Error!",
+                    text: "An error has occurred. The reply has not been added.",
+                    icon: "error",
+                    buttons: false,
+                    timer: 3500
+                });
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    });
+
+
     $("#edit").click(function() {
         if($("input[type='radio']").is(':checked')) {
             var pk = $("input[type='radio']:checked").val();
-            window.location.href = "/editcomment/"+pk+"/";
+            display_edit_comment(pk);
         } else {
             swal({
                 title: "Error!",
                 text: "You have not selected a comment to edit.",
-                icon: "error"
+                icon: "error",
+                buttons: false,
+                timer: 3500
             });
         }
 
     });
 
-    $("#reply").click(function() {
-        if($("input[type='radio']").is(':checked')) {
-            var pk = $("input[type='radio']:checked").val();
-            display_comment(pk);
-        } else {
-            swal({
-                title: "Error!",
-                text: "You have not selected a comment to edit.",
-                icon: "error"
-            });
-        }
 
-    });
+    function checkIfReply(reply) {
+        $('#thereply').show();
+        $('#thereply #name').text("@" + reply[0].name);
+        $('#thereply #content').text('"' + reply[0].content + '"');
+    }
 
-    function display_comment(pk){
+
+    function display_edit_comment(pk){
         $.ajax({
-            url : "/getcomment/"+pk+"/",
+            url : "/geteditcomment/"+pk+"/",
             type: 'GET',
             dataType: 'json',
             success : function(json) {
-                console.log(json.data);
-                $('#content').text(json.data[0].content);
-                $('#name').text(json.data[0].name);
-                $('#id_post').val(json.data[0].post_id);
-                $('#id_parent').val(json.data[0].id);
-                $('form .displaycomment').show();
+                // console.log(json.data);
+                // console.log(json.reply);
+
+                if (json.reply.length != 0) {
+                    checkIfReply(json.reply);
+                }
+
+                $('#title').text(json.data[1].title);
+                $('#editModal #id_content').val(json.data[0].content);
+                $('#editModal #id_name').val(json.data[0].name);
+                $('#editModal #id_email').val(json.data[0].email);
+                $('#editModal #id_website').val(json.data[0].website);
+                $('#editModal #id_status').val(json.data[0].status);
+                $('#editModal #id_image').val(json.data[0].image);
+                $('#editModal #id_author').val(json.data[0].author);
+                $('#editModal #id_post').val(json.data[0].post);
+                $('#editModal #parent').val(json.data[0].parent);
+                $('#editModalTitle').text("Edit Comment From @" + json.data[0].name);
+                $('#editModal form .displaycomment').show();
+                $('#editModal').modal('show');
             },
             error : function(xhr, errmsg, err) {
                 swal({
                     title: "Error!",
                     text: "An error has occurred. The comment has not been retrieved.",
-                    icon: "error"
+                    icon: "error",
+                    buttons: false,
+                    timer: 3500
                 });
                 console.log(xhr.status + ": " + xhr.responseText);
             }
         });
     };
 
-    // function editComment(pk){
-    //     $.ajax({
-    //         url : "/editcomment/"+pk+"/",
-    //         type: 'POST',
-    //         data: $("#form").serialize(),
-    //         success : function(json) {
-    //             swal({
-    //                 title: "Success!",
-    //                 text: "The comment has been edited.",
-    //                 icon: "success"
-    //             });
-    //             $('#id_id').val("");
-    //             $('#id_content').val("");
-    //             $('#id_name').val("");
-    //             $('#id_status').val("");
-    //             $('#id_email').val("");
-    //             $('#id_website').val("");
-    //             $('#commentChanges').modal('dispose');
-    //         },
-    //         error : function(xhr, errmsg, err) {
-    //             swal({
-    //                 title: "Error!",
-    //                 text: "An error has occurred. The comment has not been edited.",
-    //                 icon: "error"
-    //             });
-    //             console.log(xhr.status + ": " + xhr.responseText);
-    //         }
-    //     });
-    // };
-
-    // $("#form").submit(function(e){
-    //     e.preventDefault();
-    //     $.ajax({
-    //         url : "/comments/",
-    //         type: 'POST',
-    //         data: $("#form").serialize(),
-    //         success : function(json) {
-    //             swal({
-    //                 title: "Success!",
-    //                 text: "The comment has been added.",
-    //                 icon: "success"
-    //             });
-    //         },
-    //         error : function(xhr, errmsg, err) {
-    //             swal({
-    //                 title: "Error!",
-    //                 text: "An error has occurred. The comment has not been edited.",
-    //                 icon: "error"
-    //             });
-    //             console.log(xhr.status + ": " + xhr.responseText);
-    //         }
-    //     });
-    // });
+    $('#editModal form').submit(function(e){
+        e.preventDefault();
+        var pk = $("input[type='radio']:checked").val();
+        $.ajax({
+            url: '/editcomment/' + pk + '/',
+            type: 'POST',
+            data: $(this).serialize(),
+            success : function(json) {
+                swal({
+                    title: "Success!",
+                    text: "The reply has been edited.",
+                    icon: "success",
+                    buttons: false,
+                    timer: 3500
+                });
+                $('#thereply').hide();
+                $('#editModal #id_content').val('');
+                $('#editModal #id_name').val('');
+                $('#editModal #id_email').val('');
+                $('#editModal #id_website').val('');
+                $('#editModal #id_status').val('');
+                $('#editModal #id_image').val('');
+                $('#editModal #id_author').val('');
+                $('#editModal #id_post').val('');
+                $('#editModal #parent').val('');
+                $('#editModalTitle').text('');
+                $('#editModal').modal('hide');
+            },
+            error : function(xhr, errmsg, err) {
+                swal({
+                    title: "Error!",
+                    text: "An error has occurred. The reply has not been edited.",
+                    icon: "error",
+                    buttons: false,
+                    timer: 3500
+                });
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        })
+        .done(function(){
+            location.reload(true);
+        });
+    });
 
 });

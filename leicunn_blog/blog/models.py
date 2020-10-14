@@ -54,6 +54,19 @@ class Category(models.Model):
 
     description = models.TextField("Description", max_length=280, help_text="* required. Describe the content of the content in this category", blank=False)
 
+    SHOW_STATUS = (
+        ('Yes', 'Yes'),
+        ('No', 'No')
+    )
+    show = models.CharField(
+        'Show',
+        max_length=3,
+        choices=SHOW_STATUS,
+        blank=False,
+        default='Yes',
+        help_text='* Required'
+    )
+
     author = models.ForeignKey(
         get_user_model(),
         default="Anonymous",
@@ -208,17 +221,17 @@ class Quote(models.Model):
 class Comment(models.Model):
     content = models.TextField('Comment', blank=False, help_text='Comment * Required', max_length=500)
 
-    name = models.CharField('Name', max_length=60, blank=False, help_text='Name * Required')
+    name = models.CharField('Name', max_length=60, blank=True, null=True, help_text='Name * Required')
 
-    email = models.EmailField('E-mail Address', max_length=100, blank=False, help_text="E-mail Address * Required")
+    email = models.EmailField('E-mail Address', max_length=100, blank=True, null=True, help_text="E-mail Address * Required")
 
-    image = models.CharField("Image", max_length=23, blank=True)
+    image = models.TextField("Image", max_length=500, blank=True, null=True)
 
-    website = models.URLField("Website", help_text='Website (Optional)', blank=True, max_length=100)
+    website = models.URLField("Website", help_text='Website (Optional)', blank=True, null=True, max_length=100)
 
     COMMENT_STATUS = (
-        ('Show', 'Show'),
-        ('Hide', 'Hide')
+        ('Hide', 'Hide'),
+        ('Show', 'Show')
     )
     status = models.CharField(
         max_length=4,
@@ -236,7 +249,7 @@ class Comment(models.Model):
         on_delete=models.SET_NULL
     )
 
-    post = models.ForeignKey('Post', on_delete=models.CASCADE, blank=False, related_name='comments')
+    post = models.ForeignKey('Post', on_delete=models.CASCADE, blank=True, null=True, related_name='comments')
 
     parent = models.ForeignKey('self', null=True, blank=True, default=None, on_delete=models.SET_NULL, related_name='replies')
 
@@ -250,16 +263,16 @@ class Comment(models.Model):
         return reverse('comments')
 
 
-class Opinions(models.Model):
+class Opinion(models.Model):
     content = models.TextField('Comment', blank=False, help_text='Comment * Required', max_length=500)
 
-    name = models.CharField('Name', max_length=60, blank=False, help_text='Name * Required')
+    name = models.CharField('Name', max_length=60, blank=True, null=True, help_text='Name * Required')
 
-    email = models.EmailField('E-mail Address', max_length=100, blank=False, help_text="E-mail Address * Required")
+    email = models.EmailField('E-mail Address', max_length=100, blank=True, null=True, help_text="E-mail Address * Required")
 
-    image = models.CharField("Image", max_length=23, blank=True)
+    image = models.CharField("Image", max_length=500, blank=True, null=True)
 
-    website = models.URLField("Website", help_text='Website (Optional)', blank=True, max_length=100)
+    website = models.URLField("Website", help_text='Website (Optional)', blank=True, null=True, max_length=100)
 
     COMMENT_STATUS = (
         ('Show', 'Show'),
@@ -285,7 +298,7 @@ class Opinions(models.Model):
         blank=True
     )
 
-    post = models.ForeignKey('Author', on_delete=models.CASCADE, blank=False, related_name='comments')
+    post = models.ForeignKey('Author', on_delete=models.CASCADE, blank=True, null=True, related_name='comments')
 
     parent = models.ForeignKey('self', null=True, blank=True, default=None, on_delete=models.SET_NULL, related_name='replies')
 
@@ -297,3 +310,56 @@ class Opinions(models.Model):
 
     def get_absolute_url(self):
         return reverse('opinions')
+
+
+class Notification(models.Model):
+    identity = models.IntegerField(blank=False, null=False)
+
+    title = models.TextField(max_length=300, blank=False, null=False)
+
+    message = models.TextField(max_length=300, blank=False, null=False)
+
+    TYPE_STATUS = (
+        ('Comment', 'Comment'),
+        ('Opinion', 'Opinion'),
+        ('Traffic', 'Traffic'),
+        ('Post', 'Post')
+    )
+    notif_type = models.CharField(
+        max_length=7,
+        choices=TYPE_STATUS,
+        blank=False,
+        null=False
+    )
+
+    link = models.TextField(max_length=500, blank=False, null=False)
+
+    created = models.DateTimeField(auto_now_add=True)
+
+    SEEN_STATUS = (
+        (1, 1),
+        (0, 0)
+    )
+    seen = models.CharField(
+        max_length=1,
+        choices=SEEN_STATUS,
+        default=0,
+        blank=False,
+        null=False
+    )
+
+    author = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
+    class Meta:
+        ordering = ['seen', '-created']
+
+    def __str__(self):
+        return str(self.pk)
+
+    # def get_absolute_url(self):
+    #     return reverse('opinions')

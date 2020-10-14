@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+<title>{{ pagename }} | Leicunn Studio Blog</title>
+{% endblock title %}
+
+{% block brand %}
+<p class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block">{{ pagename }}</p>
+{% endblock brand %}
+
+{% block customcss %}
+<link href="{% static 'css/register.css' %}" rel="stylesheet" />
+{% endblock customcss %}
+
+{% block customjs %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="{% static 'js/register.js' %}"></script>
+{% endblock customjs %}
+
+
+{% block header %}
+<div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row">
+                <div class="col-lg-7 col-md-10">
+                    <h1 class="display-2 text-white">{{ jumbo }}</h1>
+                    <p class="text-white mt-0 mb-5">{{ jumbomessage }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock header %}
+
+{% block mainContent %}
+<div class="row mt-5">
+    <div class="col-xl-4">
+        <div class="card bg-secondary shadow">
+            <div class="card-header border-0">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0">{{ jumbo }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {% for hidden_field in form.hidden_fields %}
+                        {{ hidden_field }}
+                    {% endfor %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span class="alert-inner--icon"><i class="fas fa-exclamation-circle"></i></span>
+                        <span class="alert-inner--text"><strong>Error!</strong> {{ form.non_field_errors.as_text }}</span>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endif %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span class="alert-inner--icon"><i class="fas fa-exclamation-circle"></i></span>
+                        <span class="alert-inner--text"><strong>Error!</strong> {{ form.errors.as_text }}</span>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.first_name.id_for_label }}">First
+                                    Name</label>
+                                <input type="text" id="{{ form.first_name.id_for_label }}" name="{{ form.first_name.name }}"  maxlength="{{ form.first_name.field.max_length }}" class="form-control form-control-alternative" placeholder="{{ form.first_name.help_text }}" value="{{ form.first_name.value | default_if_none:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.last_name.id_for_label }}">Last Name</label>
+                                <input type="text" id="{{ form.last_name.id_for_label }}" name="{{ form.last_name.name }}" maxlength="{{ form.last_name.field.max_length }}" class="form-control form-control-alternative" placeholder="{{ form.last_name.help_text }}" value="{{ form.last_name.value | default_if_none:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.email.id_for_label }}">Email Address</label>
+                                <input type="email" id="{{ form.email.id_for_label }}" maxlength="{{ form.email.field.max_length }}" name="{{ form.email.name }}" class="form-control form-control-alternative" placeholder="{{ form.email.help_text }}" value="{{ form.email.value | default_if_none:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.position.id_for_label }}">Position</label>
+                                <input type="text" id="{{ form.position.id_for_label }}" maxlength="{{ form.position.field.max_length }}" name="{{ form.position.name }}" class="form-control form-control-alternative" placeholder="{{ form.position.help_text }}" value="{{ form.position.value | default_if_none:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.location.id_for_label }}">Location</label>
+                                <input type="text" id="{{ form.location.id_for_label }}" class="form-control form-control-alternative" name="{{ form.location.name }}" maxlength="{{ form.location.field.max_length }}" placeholder="{{ form.location.help_text }}" value="{{ form.location.value | default_if_none:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.website.id_for_label }}">Website</label>
+                                <input id="{{ form.website.id_for_label }}" class="form-control form-control-alternative" name="{{ form.website.name }}" placeholder="{{ form.website.help_text }}" maxlength="{{ form.website.field.max_length }}" type="text" value="{{ form.website.value | default_if_none:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 d-none">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.password1.id_for_label }}">Password 1</label>
+                                <input type="password" id="{{ form.password1.id_for_label }}" autocomplete="new-password" name="{{ form.password1.name }}" class="form-control form-control-alternative" value="{{ form.password1.value | default_if_none:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 d-none">
+                            <div class="form-group">
+                                <label class="form-control-label" for="{{ form.password2.id_for_label }}">Password 2</label>
+                                <input type="password" id="{{ form.password2.id_for_label }}" autocomplete="new-password" name="{{ form.password2.name }}" class="form-control form-control-alternative" value="{{ form.password2.value | default_if_none:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <br/><div class="form-group float-md-right">
+                                <a href="#!" type="button" class="btn btn-primary" data-toggle="modal" data-target="#profileImage">
+                                    Select Your Profile Photo
+                                </a>
+                                <select name="{{ form.image.name }}" class="d-none form-control form-control-alternative text-capitalize" id="{{ form.image.id_for_label }}">
+                                    {% for choice in profilemedia %}
+                                        <option class="text-capitalize" value="{{ choice.pk }}"
+                                            {% ifequal form.image.value choice.pk %}
+                                                selected="selected"
+                                            {% endifequal %}
+                                        >{{ choice.pk }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <br/><div class="form-group float-md-right">
+                                <a href="#!" type="button" class="btn btn-primary" data-toggle="modal" data-target="#coverImage">
+                                    Select Your Cover Photo
+                                </a>
+                                <select name="{{ form.cover.name }}" class="d-none form-control form-control-alternative text-capitalize" id="{{ form.cover.id_for_label }}">
+                                    {% for choice in covermedia %}
+                                        <option class="text-capitalize" value="{{ choice.pk }}"
+                                            {% ifequal form.cover.value choice.pk %}
+                                                selected="selected"
+                                            {% endifequal %}
+                                        >{{ choice.pk }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <button type="submit" class="btn btn-info">Save New User</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-8 mb-5 mb-xl-0">
+        <div class="card shadow">
+            <div class="card-header border-0">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0">Author Accounts</h3>
+                    </div>
+                    <div class="col text-right">
+                        <a href="#" id="edit" class="btn btn-sm btn-info">Edit</a>
+                        <a href="#" id="delete" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-items-center table-flush">
+                    <thead class="thead-light">
+                        <tr>
+                            <th></th>
+                            <th scope="col" class="owner owner1">Name</th>
+                            <th scope="col" class="owner">Username</th>
+                            <th scope="col">Article</th>
+                            <th scope="col">E-mail</th>
+                            <th scope="col">Website</th>
+                            <th scope="col">Twitter</th>
+                            <th scope="col">Instagram</th>
+                            <th scope="col">LinkedIn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                        <tr class="{{ u.slug }}">
+                            <td>
+                                <div class="custom-control custom-radio mb-3">
+                                    <input class="custom-control-input" value="{{ u.slug }}" id="{{ u.slug }}" type="radio" name="rowquote">
+                                    <label class="custom-control-label" for="{{ u.slug }}"></label>
+                                </div>
+                            </td>
+                            <th class="owner owner1">
+                                {{ u.first_name }} {{ u.last_name }}
+                            </th>
+                            <td class="owner">
+                                {{ u.username }}
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'author' slug=u.slug %}" target="_blank" class="far fa-newspaper text-primary"></a>
+                            </td>
+                            <td class="text-center">
+                                <a href="mailto:{{ u.email }}" target="_blank" class="fas fa-envelope text-primary"></a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ u.website }}" target="_blank" class="fas fa-globe text-primary"></a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ u.twitter }}" target="_blank" class="fab fa-twitter text-primary"></a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ u.instagram }}" target="_blank" class="fab fa-instagram text-primary"></a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ u.linkedin }}" target="_blank" class="fab fa-linkedin-in text-primary"></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="profileImage" tabindex="-1" role="dialog" aria-labelledby="profleImageTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="profileImageTitle">Media Gallery</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-secondary">
+
+                <div class="row">
+
+                    {% for m in profilemedia %}
+                    <div class="col-md-4 pb-3" id="media{{ m.id }}">
+                        <div class="card">
+                            <img class="card-img-top" src="{{ m.image.url }}" alt="Card image cap">
+                            <div class="card-body">
+                                <div class="custom-control custom-radio pr-3">
+                                    <input name="rowimg" class="custom-control-input" value="{{ m.id }}" id="media-{{ m.id }}" type="radio">
+                                    <label class="card-title custom-control-label text-capitalize" for="media-{{ m.id }}">
+                                        <strong>{{ m.description }}</strong>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="selectProfile">Select Image</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="coverImage" tabindex="-1" role="dialog" aria-labelledby="coverImageTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="coverImageTitle">Media Gallery</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-secondary">
+
+                <div class="row">
+
+                    {% for m in covermedia %}
+                    <div class="col-md-4 pb-3" id="media{{ m.id }}">
+                        <div class="card">
+                            <img class="card-img-top" src="{{ m.image.url }}" alt="Card image cap">
+                            <div class="card-body">
+                                <div class="custom-control custom-radio pr-3">
+                                    <input name="rowimg" class="custom-control-input" value="{{ m.id }}" id="media-{{ m.id }}" type="radio">
+                                    <label class="card-title custom-control-label text-capitalize" for="media-{{ m.id }}">
+                                        <strong>{{ m.description }}</strong>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="selectCover">Select Image</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Modal -->
+{% endblock mainContent %}

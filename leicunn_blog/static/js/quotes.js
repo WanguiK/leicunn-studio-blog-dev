@@ -36,7 +36,9 @@ $(document).ready(function () {
                     swal({
                         title: "Yeey!",
                         text: "Your quote is safe.",
-                        icon: "info"
+                        icon: "info",
+                        buttons: false,
+                        timer: 3500
                     });
                 }
             });
@@ -45,7 +47,9 @@ $(document).ready(function () {
             swal({
                 title: "Error!",
                 text: "You have not selected a quote to delete.",
-                icon: "error"
+                icon: "error",
+                buttons: false,
+                timer: 3500
             });
         }
     });
@@ -59,7 +63,9 @@ $(document).ready(function () {
                 swal({
                     title: "Success!",
                     text: "The quote has been deleted.",
-                    icon: "success"
+                    icon: "success",
+                    buttons: false,
+                    timer: 3500
                 });
             },
 
@@ -67,7 +73,9 @@ $(document).ready(function () {
                 swal({
                     title: "Error!",
                     text: "An error has occurred. The category has not been deleted.",
-                    icon: "error"
+                    icon: "error",
+                    buttons: false,
+                    timer: 3500
                 });
                 console.log(xhr.status + ": " + xhr.responseText);
             }
@@ -82,7 +90,9 @@ $(document).ready(function () {
             swal({
                 title: "Error!",
                 text: "You have not selected a quote to edit.",
-                icon: "error"
+                icon: "error",
+                buttons: false,
+                timer: 3500
             });
         }
 

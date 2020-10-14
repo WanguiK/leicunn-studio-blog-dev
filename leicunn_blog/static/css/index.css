@@ -1,3 +1,11 @@
+/* JUSTIFY BREAK-WORD */
+.justify_break {
+    text-align: justify;
+    word-break: break-word;
+}
+/* END OF JUSTIFY BREAK-WORD */
+
+
 /* TOP BAR */
 .top-bar {
     padding-top: 5px;

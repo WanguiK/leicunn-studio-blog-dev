@@ -137,18 +137,28 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">
+                    <a class="nav-link" href="{% url 'comments' %}">
                         <i class="far fa-comment-alt text-orange"></i> Comments
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " href="{% url 'updateauthor' pk=user.get_username %}">
-                        <i class="far fa-user-circle text-yellow"></i> User Profile
+                    <a class="nav-link" href="{% url 'opinions' %}">
+                        <i class="fas fa-comments text-yellow"></i> Opinions
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link " href="{% url 'updateauthor' pk=user.get_username %}">
+                        <i class="far fa-user-circle text-blue"></i> User Profile
+                    </a>
+                </li>
+                <!-- <li class="nav-item">
                     <a class="nav-link " href="profile.html">
-                        <i class="fas fa-user-plus text-blue"></i> Register
+                        <i class="fas fa-share-alt text-pink"></i> Meta Description & Social Media
+                    </a>
+                </li> -->
+                <li class="nav-item">
+                    <a class="nav-link " href="{% url 'register' %}">
+                        <i class="fas fa-user-plus text-orange"></i> Register Author
                     </a>
                 </li>
             </ul>
@@ -159,36 +169,32 @@
             <!-- Navigation -->
             <ul class="navbar-nav mb-md-3">
                 <li class="nav-item">
-                    <a class="nav-link"
-                        href="">
+                    <a class="nav-link" target="_blank" href="{% url 'index' %}">
                         <i class="fas fa-newspaper"></i> Home Page
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link"
-                        href="">
+                    <a class="nav-link" target="_blank" href="{% url 'read' slug='leverage-agile-frameworks-to-provide-a-robust-synopsis' %}">
                         <i class="fas fa-newspaper"></i> Read Post Page
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link"
-                        href="">
+                    <a class="nav-link" target="_blank" href="{% url 'categoryarticles' slug='opportunities' %}">
                         <i class="fas fa-newspaper"></i> Category / Subject Page
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link"
-                        href="">
+                    <a class="nav-link" target="_blank" href="{% url 'tag' slug='resource' %}">
                         <i class="fas fa-newspaper"></i> Tags Page
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">
+                    <a class="nav-link" target="_blank" href="{% url 'author' slug='wangui-kamande' %}">
                         <i class="fas fa-newspaper"></i> Author Page
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">
+                    <a class="nav-link" target="_blank" href="/search/?q=domination">
                         <i class="fas fa-newspaper"></i> Search Results Page
                     </a>
                 </li>
